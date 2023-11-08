@@ -23,6 +23,9 @@ $(BIN_DIR)/combineFile:$(TEST_DIR)/combineFile.c $(UTILS_SRC)
 $(BIN_DIR)/createFile:$(TEST_DIR)/createFile.c $(UTILS_DIR)/debug.c
 	gcc -Wall -o $@ $^ -I $(INCLUDE_DIR)
 
+$(BIN_DIR)/directCreateFile:$(TEST_DIR)/directCreateFile.c $(UTILS_SRC)
+	gcc -Wall -o $@ $^ -I $(INCLUDE_DIR)
+
 test:$(BIN_DIR)/readFile
 	$^
 
@@ -30,6 +33,9 @@ combine:$(BIN_DIR)/combineFile
 	$^
 
 create:$(BIN_DIR)/createFile
+	$^
+
+dcreate:$(BIN_DIR)/directCreateFile
 	$^
 
 run:$(BIN_DIR)/myread

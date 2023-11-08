@@ -6,7 +6,7 @@
   This program can be distributed under the terms of the GNU GPL.
   See the file COPYING.
 
-  gcc -Wall myread.c ./aux/needle.c  `pkg-config fuse --cflags --libs` -o myread
+  gcc -Wall ./src/myread.c ./utils/debug.c ./utils/needle.c -o ./bin/myread `pkg-config fuse3 --cflags --libs` -I ./include
 */
 
 #define FUSE_USE_VERSION 31
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 {
 	memset(&index_list, 0, sizeof(index_list));
 	if(init(&index_list) < 0) {
-		fprintf(stderr, "Error on load index\n");
+		print_error("Error on load index\n");
 		return 1;
 	}
 
