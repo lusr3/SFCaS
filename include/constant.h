@@ -1,8 +1,8 @@
 // 字符串宏定义
-#define PATH2PDIR "/home/lusr/SFCaS"
+#define PATH2PDIR "."
 #define MOUNTDIR "mountDir"
 #define OPDIR "testDir"
-#define BACKDIR "mycode/back"
+#define BACKDIR "back"
 #define FILEPREFIX "small"
 #define FILESUFFIX ".txt"
 #define INDEXFILE "index"

@@ -19,8 +19,9 @@ struct needle_index {
 
 struct needle_index_list {
     struct needle_index *indexs;
+    int is_cached;
+    struct needle_index *cached_item;
     long size;
-    // long capacity;
     FILE *data_file;
 };
 

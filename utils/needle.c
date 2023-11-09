@@ -57,6 +57,10 @@ int init(struct needle_index_list *index_list) {
 		return -1;
 	}
 
+    // 初始化 cache
+    index_list->is_cached = 0;
+    index_list->cached_item = NULL;
+
 	return index_list->size;
 }
 

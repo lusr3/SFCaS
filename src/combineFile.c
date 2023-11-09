@@ -36,8 +36,6 @@ int main() {
     
     DIR *dir = opendir(path2file);
     struct dirent *entry;
-    // 定义为指针时会报错 segmentation fault
-    // 指针没有空间，需要分配空间才能往里面写入数据
     struct stat file_info;
     struct needle_index needle;
 
@@ -46,7 +44,6 @@ int main() {
     // 3.合并到大文件中
     while((entry = readdir(dir)) != 0) {
         
-        // printf("File %s information:\n", entry->d_name);
         sprintf(path2file, "%s/%s/%s", PATH2PDIR, OPDIR, entry->d_name);
         int flag = lstat(path2file, &file_info);
         

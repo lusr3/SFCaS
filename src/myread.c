@@ -36,21 +36,23 @@ static int my_getattr(const char *path, struct stat *stbuf,
 	
 	memset(stbuf, 0, sizeof(struct stat));
 	if(strcmp(filename, "/") == 0) {
-		// 八进制表示
-		// 0755的后三位分别表示所有者、组、其他人
-		// 7-111 表示读、写、执行
 		stbuf->st_mode = __S_IFDIR | 0755;
+		index_list.is_cached = 0;
 	}
 	else if(strcmp(filename + 1, DATAFILE) == 0
 	|| strcmp(filename + 1, INDEXFILE) == 0) {
 		stbuf->st_mode = __S_IFREG | 0444;
+		index_list.is_cached = 0;
 	}
 	else {
 		struct needle_index *cur_index = find_index(&index_list, filename + 1);
 		if(!cur_index) {
+			index_list.is_cached = 0;
 			print_error("Error on finding target file %s.\n", filename + 1);
 			return -errno;
 		}
+		index_list.is_cached = 1;
+		index_list.cached_item = cur_index;
 		stbuf->st_mode = __S_IFREG | 0444;
 		stbuf->st_size = cur_index->size;
 	}
@@ -90,14 +92,16 @@ static int my_open(const char *path, struct fuse_file_info *fi) {
 	return 0;
 }
 
-// size 和 offset 并不是实际客户端读取的值
-// size 和 offset 都是 4096 的倍数
 static int my_read(const char *path, char *buf, size_t size, off_t offset,
 		    struct fuse_file_info *fi) {
 	printf("%s %s size %ld offset %ld\n", __FUNCTION__, path, size, offset);
 	char *filename = strrchr(path, '/');
 
-	struct needle_index *cur_index = find_index(&index_list, filename + 1);
+	struct needle_index *cur_index = NULL;
+	if(index_list.is_cached && strcmp(filename + 1, index_list.cached_item->filename) == 0) 
+		cur_index = index_list.cached_item;
+	else 
+		cur_index = find_index(&index_list, filename + 1);
 	if(cur_index) {
 		int flag = fseek(index_list.data_file, cur_index->offset + offset, SEEK_SET);
 		if(flag) {
