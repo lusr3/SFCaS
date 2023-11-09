@@ -4,20 +4,20 @@ UTILS_DIR := ./utils
 SRC_DIR := ./src
 INCLUDE_DIR := ./include
 
-OP_DIR := ./testDir
-MOUNT_DIR := ./mountDir
+OP_DIR := /home/lusr/SFCaS/mycode/testDir
+MOUNT_DIR := /home/lusr/SFCaS/mycode/mountDir
 
 UTILS_SRC = $(wildcard $(UTILS_DIR)/*.c)
 
 CC := gcc
 
 build:$(BIN_DIR)/myread $(BIN_DIR)/combineFile $(BIN_DIR)/readFile $(BIN_DIR)/createFile $(BIN_DIR)/directCreateFile
-	@if [ ! -d $(OP_DIR) ]; then \
-		mkdir -p $(OP_DIR); \
-	fi
-	@if [ ! -d $(MOUNT_DIR) ]; then \
-		mkdir -p $(MOUNT_DIR); \
-	fi
+# @if [ ! -d $(OP_DIR) ]; then \
+# 	mkdir -p $(OP_DIR); \
+# fi
+# @if [ ! -d $(MOUNT_DIR) ]; then \
+# 	mkdir -p $(MOUNT_DIR); \
+# fi
 
 $(BIN_DIR)/myread:$(SRC_DIR)/myread.c $(UTILS_SRC)
 	$(CC) -Wall $^ -o $@ `pkg-config fuse3 --cflags --libs` -I $(INCLUDE_DIR)
