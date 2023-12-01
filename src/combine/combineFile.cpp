@@ -22,7 +22,7 @@ int main() {
         print_error("Error for index file %s\n", path2indexFile);
         return 1;
     }
-    int read_bytes = fread(&small_file_num, sizeof(long), 1, index_file);
+    size_t read_bytes = fread(&small_file_num, sizeof(long), 1, index_file);
     // 文件新创建则先写入 0 占位
     if(read_bytes < sizeof(long)) {
         fwrite(&small_file_num, sizeof(long), 1, index_file);

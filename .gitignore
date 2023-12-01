@@ -1,0 +1,9 @@
+back/
+bin/
+testDir/
+mountDir/
+test/
+./
+../
+.git/
+*.gz
