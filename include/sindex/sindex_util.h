@@ -51,6 +51,8 @@ struct RCUStatus {
   std::atomic<int64_t> status;
   std::atomic<bool> waiting;
 };
+
+// retry 的意思？
 enum class Result { ok, failed, retry };
 struct BGInfo {
   size_t bg_i;  // for calculation responsible range

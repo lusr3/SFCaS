@@ -26,13 +26,13 @@
 
 namespace sindex {
 
-template <class key_t, class val_t, bool seq>
+template <class key_t, class val_t>
 class Root {
   struct PartialModelMeta;
-  typedef Group<key_t, val_t, seq, max_group_model_n> group_t;
+  typedef Group<key_t, val_t> group_t;
   typedef PartialModelMeta model_meta_t;
 
-  template <class key_tt, class val_tt, bool sequential>
+  template <class key_tt, class val_tt>
   friend class SIndex;
 
   struct PartialModelMeta {
@@ -46,23 +46,11 @@ class Root {
   void init(const std::vector<key_t> &keys, const std::vector<val_t> &vals);
 
  result_t get(const key_t &key, val_t &val);
- result_t put(const key_t &key, const val_t &val,
-                      const uint32_t worker_id);
- result_t remove(const key_t &key);
- size_t scan(const key_t &begin, const size_t n,
-                     std::vector<std::pair<key_t, val_t>> &result);
- size_t range_scan(const key_t &begin, const key_t &end,
-                           std::vector<std::pair<key_t, val_t>> &result);
-
-  static void *do_adjustment(void *args);
   Root *create_new_root();
   void trim_root();
 
  private:
   void adjust_root_model();
-  void train_rmi(size_t rmi_2nd_stage_model_n,
-                 const std::vector<double *> &model_key_ptrs,
-                 const std::vector<size_t> &positions);
   void train_piecewise_model();
  void partial_key_len_of_pivots(const size_t start_i,
                                         const size_t end_i, uint32_t &p_len,

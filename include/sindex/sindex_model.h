@@ -44,6 +44,7 @@ inline void model_prepare(const std::vector<double *> &model_key_ptrs,
     return;
   }
 
+  // 一元看不懂？？？
   if (feature_len == 1) {
     double x_expected = 0, y_expected = 0, xy_expected = 0,
            x_square_expected = 0;
@@ -120,6 +121,7 @@ inline void model_prepare(const std::vector<double *> &model_key_ptrs,
   }
 }
 
+// 位置只能取非负的预测值，最小是 0
 inline size_t model_predict(double *weights, const double *model_key,
                             size_t feature_len) {
   if (feature_len == 1) {

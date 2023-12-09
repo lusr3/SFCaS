@@ -5,7 +5,7 @@
 
 #include "helper.h"
 #include "sindex.h"
-#include "sindex_buffer.h"
+// #include "sindex_buffer.h"
 #include "sindex_group.h"
 #include "sindex_root.h"
 #include "sindex_util.h"

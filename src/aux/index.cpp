@@ -26,9 +26,7 @@ int init(struct needle_index_list *index_list) {
 	fclose(index_file);
 
 	// 排序
-    printf("sort before\n");
     std::sort(index_list->indexs.begin(), index_list->indexs.end());
-    printf("sort after\n");
     // 打开大文件
     sprintf(path, "%s/%s/%s", PATH2PDIR, OPDIR, DATAFILE);
 	index_list->data_file = fopen(path, "rb");
@@ -53,7 +51,7 @@ sindex_t *get_sindex_model(std::vector<struct needle_index> &indexs){
     }
     std::vector<uint64_t> vals(indexs.size());
     std::iota(vals.begin(), vals.end(), 0);
-    return new sindex_t(keys, vals, 1, 1);
+    return new sindex_t(keys, vals, 1);
 }
 
 struct needle_index *find_index(struct needle_index_list *index_list, const char *filename, sindex_t *index_model){

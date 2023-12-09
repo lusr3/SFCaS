@@ -26,15 +26,14 @@
 #include "index.h"
 
 namespace sindex {
-template class Root<index_key_t, uint64_t, false>;
+template class Root<index_key_t, uint64_t>;
 
-template <class key_t, class val_t, bool seq>
-Root<key_t, val_t, seq>::~Root() {}
+template <class key_t, class val_t>
+Root<key_t, val_t>::~Root() {}
 
-template <class key_t, class val_t, bool seq>
-void Root<key_t, val_t, seq>::init(const std::vector<key_t> &keys,
+template <class key_t, class val_t>
+void Root<key_t, val_t>::init(const std::vector<key_t> &keys,
                                    const std::vector<val_t> &vals) {
-  INVARIANT(seq == false);
 
   std::vector<size_t> pivot_indexes;
   grouping_by_partial_key(keys, config.group_error_bound,
@@ -44,6 +43,7 @@ void Root<key_t, val_t, seq>::init(const std::vector<key_t> &keys,
 
   group_n = pivot_indexes.size();
   size_t record_n = keys.size();
+  // group_pivot --> group
   groups = std::make_unique<std::pair<key_t, group_t *volatile>[]>(group_n);
 
   double max_group_error = 0, avg_group_error = 0;
@@ -65,6 +65,7 @@ void Root<key_t, val_t, seq>::init(const std::vector<key_t> &keys,
 
     avg_prefix_len += get_group_ptr(group_i)->prefix_len;
     avg_feature_len += get_group_ptr(group_i)->feature_len;
+    // 最小的起始位置和最大的特征长度
     feature_begin_i =
         std::min(feature_begin_i, (size_t)groups[group_i].second->prefix_len);
     max_feature_len =
@@ -94,259 +95,8 @@ void Root<key_t, val_t, seq>::init(const std::vector<key_t> &keys,
              << sizeof(typename group_t::wrapped_val_t));
 }
 
-/*
- * Root::put
- */
-template <class key_t, class val_t, bool seq>
-inline result_t Root<key_t, val_t, seq>::put(const key_t &key, const val_t &val,
-                                             const uint32_t worker_id) {
-  return locate_group(key)->put(key, val, worker_id);
-}
-
-/*
- * Root::remove
- */
-template <class key_t, class val_t, bool seq>
-inline result_t Root<key_t, val_t, seq>::remove(const key_t &key) {
-  return locate_group(key)->remove(key);
-}
-
-template <class key_t, class val_t, bool seq>
-inline size_t Root<key_t, val_t, seq>::scan(
-    const key_t &begin, const size_t n,
-    std::vector<std::pair<key_t, val_t>> &result) {
-  size_t remaining = n;
-  result.clear();
-  result.reserve(n);
-  key_t next_begin = begin;
-  key_t latest_group_pivot = key_t::min();  // for cross-slot chained groups
-
-  int group_i;
-  group_t *group = locate_group_pt2(begin, locate_group_pt1(begin, group_i));
-  while (remaining && group_i < (int)group_n) {
-    while (remaining && group &&
-           group->pivot > latest_group_pivot /* avoid re-entry */) {
-      size_t done = group->scan(next_begin, remaining, result);
-      assert(done <= remaining);
-      remaining -= done;
-      latest_group_pivot = group->pivot;
-      next_begin = key_t::min();  // though don't know the exact begin
-      group = group->next;
-    }
-    group_i++;
-    group = get_group_ptr(group_i);
-  }
-
-  return n - remaining;
-}
-
-template <class key_t, class val_t, bool seq>
-inline size_t Root<key_t, val_t, seq>::range_scan(
-    const key_t &begin, const key_t &end,
-    std::vector<std::pair<key_t, val_t>> &result) {
-  COUT_N_EXIT("not implemented yet");
-}
-
-template <class key_t, class val_t, bool seq>
-void *Root<key_t, val_t, seq>::do_adjustment(void *args) {
-  std::atomic<bool> &started = ((BGInfo *)args)->started;
-  std::atomic<bool> &finished = ((BGInfo *)args)->finished;
-  size_t bg_i = (((BGInfo *)args)->bg_i);
-  size_t bg_num = (((BGInfo *)args)->bg_n);
-  volatile bool &running = ((BGInfo *)args)->running;
-
-  while (running) {
-    sleep(1);
-    if (started) {
-      started = false;
-
-      // read the current root ptr and bg thread's responsible range
-      Root &root = **(Root * volatile *)(((BGInfo *)args)->root_ptr);
-      size_t begin_group_i = bg_i * root.group_n / bg_num;
-      size_t end_group_i = bg_i == bg_num - 1
-                               ? root.group_n
-                               : (bg_i + 1) * root.group_n / bg_num;
-
-      // iterate through the array, and do maintenance
-      size_t m_split = 0, g_split = 0, m_merge = 0, g_merge = 0, compact = 0;
-      size_t buf_size = 0, cnt = 0;
-      for (size_t group_i = begin_group_i; group_i < end_group_i; group_i++) {
-        if (group_i % 50000 == 0) {
-          DEBUG_THIS("------ [structure update] doing group_i=" << group_i);
-        }
-
-        group_t *volatile *group = &(root.groups[group_i].second);
-        while (*group != nullptr) {
-// disable model split/merge
-#if 0
-          // check model split/merge
-          bool should_split_group = false;
-          bool might_merge_group = false;
-
-          size_t max_trial_n =
-              max_group_model_n;  // set this to avoid ping-pong effect
-          for (size_t trial_i = 0; trial_i < max_trial_n; ++trial_i) {
-            group_t *old_group = (*group);
-
-            double mean_error;
-            if (seq) {
-              mean_error = old_group->mean_error_est();
-            } else {
-              mean_error = old_group->get_mean_error();
-            }
-
-            uint16_t model_n = old_group->model_n;
-            if (mean_error > config.group_error_bound) {
-              if (model_n != max_group_model_n) {
-                // DEBUG_THIS("split model, err: " << mean_error
-                //  << ", trial_i: " << trial_i);
-                *group = old_group->split_model();
-                memory_fence();
-                rcu_barrier();
-                if (seq) {
-                  (*group)->enable_seq_insert_opt();
-                }
-                m_split++;
-                delete old_group;
-              } else {
-                should_split_group = true;
-                break;
-              }
-            } else if (mean_error < config.group_error_bound /
-                                        config.group_error_tolerance) {
-              if (model_n != 1) {
-                // DEBUG_THIS("merge model, err: " << mean_error
-                //  << ", trial_i: " << trial_i);
-                *group = old_group->merge_model();
-                memory_fence();
-                rcu_barrier();
-                if (seq) {
-                  (*group)->enable_seq_insert_opt();
-                }
-                m_merge++;
-                delete old_group;
-              } else {
-                might_merge_group = true;
-                break;
-              }
-            } else {
-              break;
-            }
-          }
-
-          // prepare for group merge
-          group_t *volatile *next_group = nullptr;
-          if ((*group)->next) {
-            next_group = &((*group)->next);
-          } else if (group_i != end_group_i - 1 &&
-                     root.get_group_ptr(group_i + 1)) {
-            next_group = &(root.groups[group_i + 1].second);
-          }
-#endif
-
-          // check for group split/merge, if not, do compaction
-          size_t buffer_size = (*group)->buffer->size();
-          buf_size += buffer_size;
-          cnt++;
-          group_t *old_group = (*group);
-
-// disable group split/merge
-#if 0
-          if (should_split_group || buffer_size > config.buffer_size_bound) {
-            // DEBUG_THIS("split group, buf_size: " << buffer_size);
-
-            group_t *intermediate = old_group->split_group_pt1();
-            *group = intermediate;  // create 2 new groups with freezed buffer
-            memory_fence();
-            rcu_barrier();  // make sure no one is inserting to buffer
-            group_t *new_group = intermediate->split_group_pt2();  // now merge
-            *group = new_group;
-            memory_fence();
-            rcu_barrier();  // make sure no one is using old/intermedia groups
-            g_split++;
-            new_group->compact_phase_2();
-            new_group->next->compact_phase_2();
-            memory_fence();
-            rcu_barrier();  // make sure no one is accessing the old data
-            old_group->free_data();  // intermidiates share the array and buffer
-            old_group->free_buffer();  // so no free_xxx is needed
-            delete old_group;
-            delete intermediate->next;  // but deleting the metadata is needed
-            delete intermediate;
-            ((BGInfo *)args)->should_update_array = true;
-
-            // skip next (the split new one), to avoid ping-pong split / merge
-            group = &((*group)->next);
-          } else if (might_merge_group &&
-                  buffer_size < config.buffer_size_bound /
-                               config.buffer_size_tolerance &&
-                  next_group != nullptr) {
-            if (seq == true) {
-              COUT_VAR(group_i);
-              COUT_VAR(begin_group_i);
-              COUT_VAR(end_group_i);
-              COUT_VAR(old_group);
-              COUT_VAR(next_group);
-            }
-
-            // DEBUG_THIS("merge group, buf_size: " << buffer_size);
-
-            group_t *old_next = (*next_group);
-            group_t *new_group = old_group->merge_group(*old_next);
-            *group = new_group;
-            *next_group = new_group;  // first set 2 ptrs to a valid one
-            memory_fence();  // make sure that no one is accessing old groups
-            rcu_barrier();   // before nullify the old next
-            *next_group = nullptr;  // then nullify the next
-            g_merge++;
-            new_group->compact_phase_2();
-            memory_fence();
-            rcu_barrier();  // make sure no one is accessing the old data
-            old_group->free_data();
-            old_group->free_buffer();
-            old_next->free_data();
-            old_next->free_buffer();
-            delete old_group;
-            delete old_next;
-            ((BGInfo *)args)->should_update_array = true;
-          } else
-#endif
-          if (buffer_size > config.buffer_compact_threshold) {
-            group_t *new_group = old_group->compact_phase_1();
-            *group = new_group;
-            memory_fence();
-            rcu_barrier();
-            compact++;
-            new_group->compact_phase_2();
-            memory_fence();
-            rcu_barrier();  // make sure no one is accessing the old data
-            old_group->free_data();
-            old_group->free_buffer();
-            delete old_group;
-          }
-
-          // do next (in the chain)
-          group = &((*group)->next);
-        }
-      }
-
-      finished = true;
-      DEBUG_THIS("------ [structure update] m_split_n: " << m_split);
-      DEBUG_THIS("------ [structure update] g_split_n: " << g_split);
-      DEBUG_THIS("------ [structure update] m_merge_n: " << m_merge);
-      DEBUG_THIS("------ [structure update] g_merge_n: " << g_merge);
-      DEBUG_THIS("------ [structure update] compact_n: " << compact);
-      DEBUG_THIS("------ [structure update] buf_size/cnt: " << 1.0 * buf_size /
-                                                                   cnt);
-      DEBUG_THIS("------ [structure update] done with "
-                 << begin_group_i << "-" << end_group_i << " (" << cnt << ")");
-    }
-  }
-  return nullptr;
-}
-
-template <class key_t, class val_t, bool seq>
-Root<key_t, val_t, seq> *Root<key_t, val_t, seq>::create_new_root() {
+template <class key_t, class val_t>
+Root<key_t, val_t> *Root<key_t, val_t>::create_new_root() {
   Root *new_root = new Root();
 
   size_t new_group_n = 0;
@@ -385,8 +135,8 @@ Root<key_t, val_t, seq> *Root<key_t, val_t, seq>::create_new_root() {
   return new_root;
 }
 
-template <class key_t, class val_t, bool seq>
-void Root<key_t, val_t, seq>::trim_root() {
+template <class key_t, class val_t>
+void Root<key_t, val_t>::trim_root() {
   for (size_t group_i = 0; group_i < group_n; group_i++) {
     group_t *group = get_group_ptr(group_i);
     if (group_i != group_n - 1) {
@@ -396,13 +146,14 @@ void Root<key_t, val_t, seq>::trim_root() {
   }
 }
 
-template <class key_t, class val_t, bool seq>
-inline result_t Root<key_t, val_t, seq>::get(const key_t &key, val_t &val) {
+template <class key_t, class val_t>
+inline result_t Root<key_t, val_t>::get(const key_t &key, val_t &val) {
   return locate_group(key)->get(key, val);
 }
 
-template <class key_t, class val_t, bool seq>
-void Root<key_t, val_t, seq>::adjust_root_model() {
+// 训练 root 处的模型用于查找对应的 group
+template <class key_t, class val_t>
+void Root<key_t, val_t>::adjust_root_model() {
   train_piecewise_model();
 
   std::vector<double> errors(group_n);
@@ -417,8 +168,8 @@ void Root<key_t, val_t, seq>::adjust_root_model() {
              << this->root_model_n << ", error=" << mean_error);
 }
 
-template <class key_t, class val_t, bool seq>
-inline size_t Root<key_t, val_t, seq>::predict(const key_t &key) {
+template <class key_t, class val_t>
+inline size_t Root<key_t, val_t>::predict(const key_t &key) {
   uint32_t m_i = 0;
   while (m_i < root_model_n - 1 && key >= model_pivots[m_i + 1]) {
     m_i++;
@@ -429,8 +180,8 @@ inline size_t Root<key_t, val_t, seq>::predict(const key_t &key) {
   return model_predict(models[m_i].weights.data(), model_key, f_len);
 }
 
-template <class key_t, class val_t, bool seq>
-inline void Root<key_t, val_t, seq>::train_piecewise_model() {
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::train_piecewise_model() {
   std::vector<size_t> indexes;
   std::vector<key_t> pivots(group_n);
   for (size_t g_i = 0; g_i < group_n; ++g_i) {
@@ -440,11 +191,13 @@ inline void Root<key_t, val_t, seq>::train_piecewise_model() {
                           config.partial_len_bound, config.forward_step,
                           config.backward_step, config.group_min_size, indexes);
 
+  // 限制模型数量在 4 个及以下
   if (indexes.size() > max_root_model_n) {
     size_t index_per_model = indexes.size() / max_root_model_n;
     std::vector<size_t> new_indexes;
     size_t trailing = indexes.size() - index_per_model * max_root_model_n;
     size_t start_i = 0;
+    // 使用 group 得到的索引，但是将 trailing 的部分依次添加到前面
     for (size_t i = 0; i < max_root_model_n; ++i) {
       new_indexes.push_back(indexes[start_i]);
       start_i += index_per_model;
@@ -479,6 +232,7 @@ inline void Root<key_t, val_t, seq>::train_piecewise_model() {
       get_group_ptr(k_i + b_i)->pivot.get_model_key(
           p_len, f_len, m_keys.data() + f_len * k_i);
       m_key_ptrs[k_i] = m_keys.data() + f_len * k_i;
+      // k_i 的意义？
       ps[k_i] = k_i + b_i;
     }
 
@@ -491,8 +245,8 @@ inline void Root<key_t, val_t, seq>::train_piecewise_model() {
   }
 }
 
-template <class key_t, class val_t, bool seq>
-inline void Root<key_t, val_t, seq>::partial_key_len_of_pivots(
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::partial_key_len_of_pivots(
     const size_t start_i, const size_t end_i, uint32_t &p_len,
     uint32_t &f_len) {
   assert(start_i < end_i);
@@ -519,23 +273,24 @@ inline void Root<key_t, val_t, seq>::partial_key_len_of_pivots(
           std::max(max_adjacent_prefix, p_len + adjacent_prefix);
     }
   }
+  // 为什么 +2？
   f_len = max_adjacent_prefix - p_len + 2;
 }
 
 /*
  * Root::locate_group
  */
-template <class key_t, class val_t, bool seq>
-inline typename Root<key_t, val_t, seq>::group_t *
-Root<key_t, val_t, seq>::locate_group(const key_t &key) {
+template <class key_t, class val_t>
+inline typename Root<key_t, val_t>::group_t *
+Root<key_t, val_t>::locate_group(const key_t &key) {
   int group_i;  // unused
   group_t *head = locate_group_pt1(key, group_i);
   return locate_group_pt2(key, head);
 }
 
-template <class key_t, class val_t, bool seq>
-inline typename Root<key_t, val_t, seq>::group_t *
-Root<key_t, val_t, seq>::locate_group_pt1(const key_t &key, int &group_i) {
+template <class key_t, class val_t>
+inline typename Root<key_t, val_t>::group_t *
+Root<key_t, val_t>::locate_group_pt1(const key_t &key, int &group_i) {
   group_i = predict(key);
   group_i = group_i > (int)group_n - 1 ? group_n - 1 : group_i;
   group_i = group_i < 0 ? 0 : group_i;
@@ -597,9 +352,9 @@ Root<key_t, val_t, seq>::locate_group_pt1(const key_t &key, int &group_i) {
   return group;
 }
 
-template <class key_t, class val_t, bool seq>
-inline typename Root<key_t, val_t, seq>::group_t *
-Root<key_t, val_t, seq>::locate_group_pt2(const key_t &key, group_t *begin) {
+template <class key_t, class val_t>
+inline typename Root<key_t, val_t>::group_t *
+Root<key_t, val_t>::locate_group_pt2(const key_t &key, group_t *begin) {
   group_t *group = begin;
   group_t *next = group->next;
   while (next != nullptr && next->pivot <= key) {
@@ -609,31 +364,32 @@ Root<key_t, val_t, seq>::locate_group_pt2(const key_t &key, group_t *begin) {
   return group;
 }
 
-template <class key_t, class val_t, bool seq>
-inline void Root<key_t, val_t, seq>::set_group_ptr(size_t group_i,
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::set_group_ptr(size_t group_i,
                                                    group_t *g_ptr) {
   groups[group_i].second = g_ptr;
 }
 
-template <class key_t, class val_t, bool seq>
-inline typename Root<key_t, val_t, seq>::group_t *
-Root<key_t, val_t, seq>::get_group_ptr(size_t group_i) const {
+template <class key_t, class val_t>
+inline typename Root<key_t, val_t>::group_t *
+Root<key_t, val_t>::get_group_ptr(size_t group_i) const {
   return groups[group_i].second;
 }
 
-template <class key_t, class val_t, bool seq>
-inline void Root<key_t, val_t, seq>::set_group_pivot(size_t group_i,
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::set_group_pivot(size_t group_i,
                                                      const key_t &key) {
   groups[group_i].first = key;
 }
 
-template <class key_t, class val_t, bool seq>
-inline key_t &Root<key_t, val_t, seq>::get_group_pivot(size_t group_i) const {
+template <class key_t, class val_t>
+inline key_t &Root<key_t, val_t>::get_group_pivot(size_t group_i) const {
   return groups[group_i].first;
 }
 
-template <class key_t, class val_t, bool seq>
-inline void Root<key_t, val_t, seq>::grouping_by_partial_key(
+// 最重要的是找到每个组的 pivot 下标
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::grouping_by_partial_key(
     const std::vector<key_t> &keys, size_t et, size_t pt, size_t fstep,
     size_t bstep, size_t min_size, std::vector<size_t> &pivot_indexes) const {
   pivot_indexes.clear();
@@ -659,6 +415,7 @@ inline void Root<key_t, val_t, seq>::grouping_by_partial_key(
     common_p_history.clear();
     max_p_history.clear();
 
+    // group_error 没有作用
     while (f_len < pt && group_error < et) {
       size_t pre_end_i = end_i;
       end_i += fstep;
@@ -667,6 +424,7 @@ inline void Root<key_t, val_t, seq>::grouping_by_partial_key(
                    << (keys.size() - start_i));
         break;
       }
+      // 得到公共前缀和最长公共前缀
       partial_key_len_by_step(keys, start_i, pre_end_i, end_i, common_p_len,
                               max_p_len, common_p_history, max_p_history);
       INVARIANT(common_p_len <= max_p_len);
@@ -676,6 +434,7 @@ inline void Root<key_t, val_t, seq>::grouping_by_partial_key(
       //     train_and_get_err(model_keys, start_i, end_i, common_p_len, f_len);
     }
 
+    // group_error 没有作用
     while (f_len > pt || group_error > et) {
       if (end_i >= keys.size()) {
         DEBUG_THIS("[Grouping] reach end. last group size= "
@@ -716,8 +475,8 @@ inline void Root<key_t, val_t, seq>::grouping_by_partial_key(
              << ", avg_f_len=" << avg_f_len / pivot_indexes.size());
 }
 
-template <class key_t, class val_t, bool seq>
-inline void Root<key_t, val_t, seq>::partial_key_len_by_step(
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::partial_key_len_by_step(
     const std::vector<key_t> &keys, const size_t start_i,
     const size_t step_start_i, const size_t step_end_i, size_t &common_p_len,
     size_t &max_p_len, std::unordered_map<size_t, size_t> &common_p_history,
@@ -763,8 +522,8 @@ inline void Root<key_t, val_t, seq>::partial_key_len_by_step(
   }
 }
 
-template <class key_t, class val_t, bool seq>
-inline double Root<key_t, val_t, seq>::train_and_get_err(
+template <class key_t, class val_t>
+inline double Root<key_t, val_t>::train_and_get_err(
     std::vector<double> &model_keys, size_t start_i, size_t end_i, size_t p_len,
     size_t f_len) const {
   size_t key_n = end_i - start_i;

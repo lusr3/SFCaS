@@ -81,9 +81,9 @@ inline double dot_product(const double *a, const double *b, size_t len) {
   for (size_t ii = 0; ii < (len >> 2); ++ii) {
     __m256d x = _mm256_loadu_pd(a + 4 * ii);
     __m256d y = _mm256_loadu_pd(b + 4 * ii);
-    // __m256d z = _mm256_mul_pd(x, y);
-    // sum_vec = _mm256_add_pd(sum_vec, z);
-    sum_vec = _mm256_fmadd_pd(x, y, sum_vec);
+    __m256d z = _mm256_mul_pd(x, y);
+    sum_vec = _mm256_add_pd(sum_vec, z);
+    // sum_vec = _mm256_fmadd_pd(x, y, sum_vec);
   }
 
   // the partial dot-product for the remaining elements

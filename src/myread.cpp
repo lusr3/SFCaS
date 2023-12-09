@@ -6,7 +6,6 @@
   This program can be distributed under the terms of the GNU GPL.
   See the file COPYING.
 
-  g++ -Wall ./src/myread.c ./utils/debug.c ./utils/needle.c -o ./bin/myread `pkg-config fuse3 --cflags --libs` -I ./include
 */
 
 #define FUSE_USE_VERSION 31

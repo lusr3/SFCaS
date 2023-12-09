@@ -18,7 +18,6 @@
  *
  */
 
-#include "sindex_buffer.h"
 #include "sindex_model.h"
 #include "sindex_util.h"
 
@@ -27,45 +26,17 @@
 
 namespace sindex {
 
-// max_model_n 的意思？
-template <class key_t, class val_t, bool seq, size_t max_model_n = 4>
+template <class key_t, class val_t>
 class alignas(CACHELINE_SIZE) Group {
   typedef AtomicVal<val_t> atomic_val_t;
   typedef atomic_val_t wrapped_val_t;
-  typedef AltBtreeBuffer<key_t, val_t> buffer_t;
   typedef uint64_t version_t;
   typedef std::pair<key_t, wrapped_val_t> record_t;
 
-  template <class key_tt, class val_tt, bool sequential>
+  template <class key_tt, class val_tt>
   friend class SIndex;
-  template <class key_tt, class val_tt, bool sequential>
+  template <class key_tt, class val_tt>
   friend class Root;
-
-  struct ArrayDataSource {
-    ArrayDataSource(record_t *data, uint32_t array_size, uint32_t pos);
-    void advance_to_next_valid();
-    const key_t &get_key();
-    const val_t &get_val();
-
-    uint32_t array_size, pos;
-    record_t *data;
-    bool has_next;
-    key_t next_key;
-    val_t next_val;
-  };
-
-  struct ArrayRefSource {
-    ArrayRefSource(record_t *data, uint32_t array_size);
-    void advance_to_next_valid();
-    const key_t &get_key();
-    atomic_val_t &get_val();
-
-    uint32_t array_size, pos;
-    record_t *data;
-    bool has_next;
-    key_t next_key;
-    atomic_val_t *next_val_ptr;
-  };
 
  public:
   Group();
@@ -78,26 +49,10 @@ class alignas(CACHELINE_SIZE) Group {
             uint32_t model_n, uint32_t array_size);
 
   result_t get(const key_t &key, val_t &val);
-  result_t put(const key_t &key, const val_t &val,
-                      const uint32_t worker_id);
-  result_t remove(const key_t &key);
-  size_t scan(const key_t &begin, const size_t n,
-                     std::vector<std::pair<key_t, val_t>> &result);
-  size_t range_scan(const key_t &begin, const key_t &end,
-                           std::vector<std::pair<key_t, val_t>> &result);
-
   double mean_error_est() const;
   double get_mean_error() const;
-  Group *split_model();
-  Group *merge_model();
-  Group *split_group_pt1();
-  Group *split_group_pt2();
-  Group *merge_group(Group &next_group);
-  Group *compact_phase_1();
-  void compact_phase_2();
 
   void free_data();
-  void free_buffer();
 
  private:
   size_t locate_model(const key_t &key);
@@ -105,49 +60,15 @@ class alignas(CACHELINE_SIZE) Group {
   bool get_from_array(const key_t &key, val_t &val);
   result_t update_to_array(const key_t &key, const val_t &val,
                                   const uint32_t worker_id);
-  bool remove_from_array(const key_t &key);
 
   size_t get_pos_from_array(const key_t &key);
   size_t binary_search_key(const key_t &key, size_t pos_hint,
                                   size_t search_begin, size_t search_end);
-  size_t exponential_search_key(const key_t &key, size_t pos_hint) const;
-  size_t exponential_search_key(record_t *const data,
-                                       uint32_t array_size, const key_t &key,
-                                       size_t pos_hint) const;
-
-  bool get_from_buffer(const key_t &key, val_t &val, buffer_t *buffer);
-  bool update_to_buffer(const key_t &key, const val_t &val,
-                               buffer_t *buffer);
-  void insert_to_buffer(const key_t &key, const val_t &val,
-                               buffer_t *buffer);
-  bool remove_from_buffer(const key_t &key, buffer_t *buffer);
-
   void init_models(uint32_t model_n);
   void init_models(uint32_t model_n, size_t p_len, size_t f_len);
   void init_feature_length();
   double train_model(size_t model_i, size_t begin, size_t end);
 
-  void merge_refs(record_t *&new_data, uint32_t &new_array_size,
-                         int32_t &new_capacity) const;
-  void merge_refs_n_split(record_t *&new_data_1,
-                                 uint32_t &new_array_size_1,
-                                 int32_t &new_capacity_1, record_t *&new_data_2,
-                                 uint32_t &new_array_size_2,
-                                 int32_t &new_capacity_2,
-                                 const key_t &key) const;
-  void merge_refs_with(const Group &next_group, record_t *&new_data,
-                              uint32_t &new_array_size,
-                              int32_t &new_capacity) const;
-  void merge_refs_internal(record_t *new_data,
-                                  uint32_t &new_array_size) const;
-  size_t scan_2_way(const key_t &begin, const size_t n, const key_t &end,
-                           std::vector<std::pair<key_t, val_t>> &result);
-  size_t scan_3_way(const key_t &begin, const size_t n, const key_t &end,
-                           std::vector<std::pair<key_t, val_t>> &result);
-  void seq_lock();
-  void seq_unlock();
-  void enable_seq_insert_opt();
-  void disable_seq_insert_opt();
 
   double *get_model(size_t model_i) const;
   const uint8_t *get_model_pivot(size_t model_i) const;
@@ -176,16 +97,17 @@ class alignas(CACHELINE_SIZE) Group {
   uint8_t model_n = 0;              // 1B
   uint8_t prefix_len = 0;           // 1B
   uint8_t feature_len = 0;          // 1B
-  bool buf_frozen = false;          // 1B
   record_t *data = nullptr;         // 8B
   Group *next = nullptr;            // 8B
-  buffer_t *buffer = nullptr;       // 8B
-  buffer_t *buffer_temp = nullptr;  // 8B
-  // used for sequential insertion
   int32_t capacity = 0;         // 4B
   uint16_t pos_last_pivot = 0;  // 2B
   volatile uint8_t lock = 0;    // 1B
   // model data
+
+  // 先存了 pivot 信息
+  // 还有错误信息
+  // 多个 model 都是为了 predict 同一个 group？
+  // 然后每个 model 都有 feature_len + 1(偏置) 个参数
   std::array<uint8_t,
              (max_model_n - 1) * sizeof(key_t) +
                  max_model_n * sizeof(double) * (key_t::model_key_size() + 1)>
