@@ -76,8 +76,11 @@ inline double dot_product(const double *a, const double *b, size_t len) {
     return res;
   }
 
+  // 得到一个 256bit 的 64bit 浮点数向量
+  // 值为 [0.0, 0.0, 0.0, 0.0]
   __m256d sum_vec = _mm256_set_pd(0.0, 0.0, 0.0, 0.0);
 
+  // 每次计算四个长度单位
   for (size_t ii = 0; ii < (len >> 2); ++ii) {
     __m256d x = _mm256_loadu_pd(a + 4 * ii);
     __m256d y = _mm256_loadu_pd(b + 4 * ii);
@@ -90,6 +93,9 @@ inline double dot_product(const double *a, const double *b, size_t len) {
   double trailing = 0.0;
   for (size_t ii = (len & (~3)); ii < len; ++ii) trailing += a[ii] * b[ii];
 
+  // _mm256_hadd_pd(a, b)
+  // 将 a 和 b 之中相邻的两位加起来，按照 a b a b 的顺序放入新向量中
+  // res = [a0 + a1, b0 + b1, a2 + a3, b2 + b3]
   __m256d temp = _mm256_hadd_pd(sum_vec, sum_vec);
   return ((double *)&temp)[0] + ((double *)&temp)[2] + trailing;
 }

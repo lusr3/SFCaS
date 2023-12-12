@@ -68,8 +68,11 @@ dcreate:$(BIN_DIR)/directCreateFile
 run:$(BIN_DIR)/myread
 	$^ -f -o modules=subdir,subdir=$(OP_DIR) $(MOUNT_DIR)
 
-debug:$(BIN_DIR)/myread
-	$^ -d -f -o modules=subdir,subdir=$(OP_DIR) $(MOUNT_DIR)
+$(BIN_DIR)/myread_debug:$(SINDEX_SRC_CPP) $(UTILS_SRC) $(AUX_CPP) $(SRC_DIR)/myread.cpp
+	$(CXX) -Wall $^ -o $@ $(FUSE_ENV) $(MAIN_INCLUDE) -L $(MKL_LIB_DIR) $(CXX_FLAGS) $(LIBS)
+
+debug:$(BIN_DIR)/myread_debug
+	$^ -f -o modules=subdir,subdir=$(OP_DIR) $(MOUNT_DIR)
 
 clean:
 	rm $(BIN_DIR)/* 

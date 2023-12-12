@@ -44,7 +44,8 @@ inline void model_prepare(const std::vector<double *> &model_key_ptrs,
     return;
   }
 
-  // 一元看不懂？？？
+  // 一元线性回归模型
+  // 直接通过最小二乘法求得参数的值（求导）
   if (feature_len == 1) {
     double x_expected = 0, y_expected = 0, xy_expected = 0,
            x_square_expected = 0;
@@ -72,6 +73,7 @@ inline void model_prepare(const std::vector<double *> &model_key_ptrs,
     }
 
     // we only fit with useful features
+    // 保证每一个 feature 位置都是有区别的，对于某一个 feature 位置，如果所有 key 在该位都一样，就不采用
     std::vector<size_t> useful_feat_index;
     for (size_t feat_i = 0; feat_i < feature_len; feat_i++) {
       double first_val = model_key_ptrs[0][feat_i];
@@ -99,11 +101,12 @@ inline void model_prepare(const std::vector<double *> &model_key_ptrs,
         a[sample_i * n + useful_f_i] =
             model_key_ptrs[sample_i * step][useful_feat_index[useful_f_i]];
       }
-      a[sample_i * n + useful_feat_n] = 1;
+      a[sample_i * n + useful_feat_n] = 1;                // bias 位置对应的 x=1 ？
       b[sample_i] = positions[sample_i * step];
       assert(sample_i * step < model_key_ptrs.size());
     }
 
+    // 还是利用最小二乘的方法来求解参数
     lapack_int rank = 0;
     int fitting_res =
         LAPACKE_dgelss(LAPACK_ROW_MAJOR, m, n, 1 /* nrhs */, a.data(),
@@ -129,6 +132,7 @@ inline size_t model_predict(double *weights, const double *model_key,
     return res > 0 ? res : 0;
   } else {
     double res = dot_product(weights, model_key, feature_len);
+    // 加偏置
     res += weights[feature_len];
     return res > 0 ? res : 0;
   }

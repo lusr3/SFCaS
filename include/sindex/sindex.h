@@ -29,7 +29,6 @@
 
 namespace sindex {
 
-// seq 的作用？
 template <class key_t, class val_t>
 class SIndex {
   typedef Group<key_t, val_t> group_t;

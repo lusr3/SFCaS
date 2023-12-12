@@ -49,7 +49,7 @@ SIndex<key_t, val_t>::SIndex(const std::vector<key_t> &keys,
   }
 
   // ?
-  rcu_init();
+  // rcu_init();
 
   // malloc memory for root & init root
   root = new root_t();
@@ -67,7 +67,7 @@ SIndex<key_t, val_t>::~SIndex() {
 template <class key_t, class val_t>
 inline bool SIndex<key_t, val_t>::get(const key_t &key, val_t &val,
                                            const uint32_t worker_id) {
-  rcu_progress(worker_id);
+  // rcu_progress(worker_id);
   return root->get(key, val) == result_t::ok;
 }
 

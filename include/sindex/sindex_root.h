@@ -38,6 +38,7 @@ class Root {
   struct PartialModelMeta {
     uint32_t p_len;
     uint32_t f_len;
+    // 加 1 是指 偏置 ？
     std::array<double, key_t::model_key_size() + 1> weights;
   };
 
@@ -46,8 +47,6 @@ class Root {
   void init(const std::vector<key_t> &keys, const std::vector<val_t> &vals);
 
  result_t get(const key_t &key, val_t &val);
-  Root *create_new_root();
-  void trim_root();
 
  private:
   void adjust_root_model();
@@ -56,12 +55,12 @@ class Root {
                                         const size_t end_i, uint32_t &p_len,
                                         uint32_t &f_len);
  size_t predict(const key_t &key);
- size_t predict(const double *model_key);
- size_t pick_next_stage_model(size_t pos_pred);
- double *get_2nd_stage_model(const size_t model_i);
+//  size_t predict(const double *model_key);
+//  size_t pick_next_stage_model(size_t pos_pred);
+//  double *get_2nd_stage_model(const size_t model_i);
  group_t *locate_group(const key_t &key);
  group_t *locate_group_pt1(const key_t &key, int &group_i);
- group_t *locate_group_pt2(const key_t &key, group_t *begin);
+//  group_t *locate_group_pt2(const key_t &key, group_t *begin);
 
  void set_group_ptr(size_t group_i, group_t *g_ptr);
  group_t *get_group_ptr(size_t group_i) const;

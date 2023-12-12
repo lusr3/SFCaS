@@ -5,15 +5,14 @@
 
 #include "helper.h"
 #include "sindex.h"
-// #include "sindex_buffer.h"
 #include "sindex_group.h"
 #include "sindex_root.h"
 #include "sindex_util.h"
 #include "sindex_model.h"
 #include "needle.h"
 
-#if !defined(SINDEX_INTERFACE_H)
-#define SINDEX_INTERFACE_H
+#if !defined(INDEX_H)
+#define INDEX_H
 
 
 template <size_t len>
