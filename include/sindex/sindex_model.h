@@ -1,27 +1,8 @@
-/*
- * The code is part of the SIndex project.
- *
- *    Copyright (C) 2020 Institute of Parallel and Distributed Systems (IPADS),
- * Shanghai Jiao Tong University. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
 #include <vector>
 #include <assert.h>
 
 #include "helper.h"
+#include "sindex_util.h"
 #include "mkl.h"
 #include "mkl_lapacke.h"
 
@@ -101,7 +82,7 @@ inline void model_prepare(const std::vector<double *> &model_key_ptrs,
         a[sample_i * n + useful_f_i] =
             model_key_ptrs[sample_i * step][useful_feat_index[useful_f_i]];
       }
-      a[sample_i * n + useful_feat_n] = 1;                // bias 位置对应的 x=1 ？
+      a[sample_i * n + useful_feat_n] = 1;                // bias 位置对应的 x = 1
       b[sample_i] = positions[sample_i * step];
       assert(sample_i * step < model_key_ptrs.size());
     }

@@ -23,37 +23,36 @@
 #include <stdlib.h>
 
 #include "needle.h"
-#include "debug.h"
+#include "helper.h"
 #include "index.h"
 
 // 初始化时加载的索引信息
 static struct needle_index_list index_list;
 static sindex_t *sindex_model;
 
-static int my_getattr(const char *path, struct stat *stbuf,
+static int sfcas_getattr(const char *path, struct stat *stbuf,
 			struct fuse_file_info *fi)
 {
-	// printf("%s %s\n", __FUNCTION__, path);
 	const char *filename = strrchr(path, '/');
 	
 	memset(stbuf, 0, sizeof(struct stat));
 	if(strcmp(filename, "/") == 0) {
 		stbuf->st_mode = __S_IFDIR | 0755;
-		index_list.is_cached = 0;
+		index_list.is_cached = false;
 	}
 	else if(strcmp(filename + 1, DATAFILE) == 0
 	|| strcmp(filename + 1, INDEXFILE) == 0) {
 		stbuf->st_mode = __S_IFREG | 0444;
-		index_list.is_cached = 0;
+		index_list.is_cached = false;
 	}
 	else {
 		struct needle_index *cur_index = find_index(&index_list, filename + 1, sindex_model);
 		if(!cur_index) {
-			index_list.is_cached = 0;
+			index_list.is_cached = false;
 			print_error("Error on finding target file %s.\n", filename + 1);
-			return -errno;
+			return -ENOENT;
 		}
-		index_list.is_cached = 1;
+		index_list.is_cached = true;
 		index_list.cached_item = cur_index;
 		stbuf->st_mode = __S_IFREG | 0444;
 		stbuf->st_size = cur_index->size;
@@ -62,47 +61,44 @@ static int my_getattr(const char *path, struct stat *stbuf,
 	return 0;
 }
 
-static int my_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+static int sfcas_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		       off_t offset, struct fuse_file_info *fi,
 			   enum fuse_readdir_flags flags) {
-	// printf("%s %s\n", __FUNCTION__, path);
-	DIR *dp;
-	struct dirent *de;
-
-	(void) offset;
-	(void) fi;
-
-	dp = opendir(path);
-	if (dp == NULL)
-		return -errno;
-
-	while ((de = readdir(dp)) != NULL) {
+	for(size_t i = 0; i < index_list.index_num; ++i) {
 		struct stat st;
 		memset(&st, 0, sizeof(st));
-		st.st_ino = de->d_ino;
-		st.st_mode = de->d_type << 12;
-		// filler 的问题
-		// 最后为啥是 0
-		if (filler(buf, de->d_name, &st, 0, fuse_fill_dir_flags(0)))
+		st.st_size = index_list.indexs[i].size;
+		st.st_mode = __S_IFREG | 0444;
+		if (filler(buf, index_list.indexs[i].filename.get_name(), &st, 0, fuse_fill_dir_flags(0)))
 			break;
 	}
+	filler(buf, ".", nullptr, 0, fuse_fill_dir_flags(0));
+	filler(buf, "..", nullptr, 0, fuse_fill_dir_flags(0));
 
-	closedir(dp);
 	return 0;
 }
 
-static int my_open(const char *path, struct fuse_file_info *fi) {	
-	// printf("%s %s\n", __FUNCTION__, path);
-	return 0;
-}
-
-static int my_read(const char *path, char *buf, size_t size, off_t offset,
-		    struct fuse_file_info *fi) {
-	// printf("%s %s size %ld offset %ld\n", __FUNCTION__, path, size, offset);
+static int sfcas_open(const char *path, struct fuse_file_info *fi) {	
 	const char *filename = strrchr(path, '/');
 
 	struct needle_index *cur_index = NULL;
-	if(index_list.is_cached && strcmp(filename + 1, index_list.cached_item->filename) == 0) 
+	if(index_list.is_cached && strcmp(filename + 1, index_list.cached_item->filename.get_name()) == 0) 
+		cur_index = index_list.cached_item;
+	else 
+		cur_index = find_index(&index_list, filename + 1, sindex_model);
+	
+	if(!cur_index) {
+		return -ENOENT;
+	}
+	return 0;
+}
+
+static int sfcas_read(const char *path, char *buf, size_t size, off_t offset,
+		    struct fuse_file_info *fi) {
+	const char *filename = strrchr(path, '/');
+
+	struct needle_index *cur_index = NULL;
+	if(index_list.is_cached && strcmp(filename + 1, index_list.cached_item->filename.get_name()) == 0) 
 		cur_index = index_list.cached_item;
 	else 
 		cur_index = find_index(&index_list, filename + 1, sindex_model);
@@ -113,25 +109,32 @@ static int my_read(const char *path, char *buf, size_t size, off_t offset,
 			return -errno;
 		}
 		int read_size = fread(buf, 1, size, index_list.data_file);
-		// printf("Read %d bytes\n", read_size);
 		return read_size;
 	}
 	print_error("Error on finding target file %s.\n", filename + 1);
-	return -errno;
+	return -ENOENT;
+}
+
+static void *sfcas_init(struct fuse_conn_info *conn,
+			struct fuse_config *cfg)
+{
+	(void) conn;
+	cfg->kernel_cache = 1;
+	return NULL;
 }
 
 // 按照出现顺序无序初始化
 static const struct fuse_operations myOper = {
-	.getattr 	= my_getattr,
-	.open 		= my_open,
-	.read 		= my_read,
-	.readdir 	= my_readdir,
+	.getattr 	= sfcas_getattr,
+	.open 		= sfcas_open,
+	.read 		= sfcas_read,
+	.readdir 	= sfcas_readdir,
+	.init		= sfcas_init
 };
 
 
 int main(int argc, char *argv[])
 {
-	// memset(&index_list, 0, sizeof(index_list));
 	if(init(&index_list) < 0) {
 		print_error("Error on load index\n");
 		return 1;
@@ -143,5 +146,6 @@ int main(int argc, char *argv[])
 	int res = fuse_main(argc, argv, &myOper, NULL);
 
 	release_needle(&index_list);
+	release_model(sindex_model);
 	return res;
 }

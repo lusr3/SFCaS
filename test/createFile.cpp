@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include <dirent.h>
 #include <string.h>
-#include <stdlib.h>
-#include <constant.h>
-#include <debug.h>
+
+#include "constant.h"
+#include "helper.h"
 
 int main() {
     long createNum = 10;
@@ -19,7 +18,7 @@ int main() {
             return 1;
         }
         else {
-            for(int j = 0; j < 1; ++j) fputs(msg, fp);
+            fwrite(msg, 1, strlen(msg), fp);
             fclose(fp);
         }
     }

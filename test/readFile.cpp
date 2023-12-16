@@ -1,27 +1,29 @@
-#include <stdio.h>
+#include <iostream>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <constant.h>
-#include <debug.h>
 #include <sys/time.h>
+#include <random>
+
+#include "constant.h"
+#include "helper.h"
 
 int test_for_one_file() {
-    char buf[BUFFER_SIZE];
-    long file_id = 0;
+    char buf[BUFFER_SIZE + 7];
+    uint64_t file_id = 0;
     printf("Look up for file id:");
-    scanf("%ld", &file_id);
+    std::cin >> file_id;
     sprintf(buf, "%s/%s/%s%0*ld%s", PATH2PDIR, MOUNTDIR, FILEPREFIX, FILE_ID_LEN, file_id, FILESUFFIX);
+
     struct timeval start, end;
     gettimeofday(&start, NULL);
     FILE *fp = fopen(buf, "rb");
     if(fp == NULL) {
         print_error("Error on open file %s\n", buf);
-        return 1;
+        return -1;
     }
-    // fseek(fp, 4098, SEEK_SET);
-    int size = fread(buf, 1, 20, fp);
-    if(size < 1024) buf[size] = '\0';
+    int size = fread(buf, 1, BUFFER_SIZE, fp);
+    if(size < BUFFER_SIZE) buf[size] = '\0';
     printf("size: %d buf: %s\n", size, buf);
     
     fclose(fp);
@@ -31,48 +33,101 @@ int test_for_one_file() {
     return 0;
 }
 
-int test_for_many_files() {
-    char buf[BUFFER_SIZE];
-    long start_id = 0, test_num = 0, MOD = 0;
-    printf("Start look up files from:");
-    scanf("%ld", &start_id);
-    printf("Test case num and max file num is:");
-    scanf("%ld %ld", &test_num, &MOD);
+long test_for_many_files(unsigned int seed = 0, bool once = true, long num = 10, long MOD = 10) {
+    srand(seed);
+    char buf[BUFFER_SIZE + 7];
+
+    long test_num = 0, test_mod = 0;
+    if(once) {
+        printf("Test case num and max file num is:");
+        scanf("%ld %ld", &test_num, &test_mod);
+    }
+    else {
+        test_num = num;
+        test_mod = MOD;
+    }
+    long array[test_num];
+    for(long i = 0; i < test_num; ++i) {
+        array[i] = rand() % test_mod;
+    }
+
     struct timeval start, end;
     gettimeofday(&start, NULL);
-    while(test_num--) {
-        // scanf("%ld", &file_id);
-        sprintf(buf, "%s/%s/%s%0*ld%s", PATH2PDIR, MOUNTDIR, FILEPREFIX, FILE_ID_LEN, start_id, FILESUFFIX);
+    for(long i = 0; i < test_num; ++i) {
+        sprintf(buf, "%s/%s/%s%0*ld%s", PATH2PDIR, MOUNTDIR, FILEPREFIX, FILE_ID_LEN, array[i], FILESUFFIX);
         FILE *fp = fopen(buf, "rb");
         if(fp == NULL) {
             print_error("Error on open file %s\n", buf);
-            return 1;
+            return -1;
         }
-        // fseek(fp, 4098, SEEK_SET);
-        int size = fread(buf, 1, 20, fp);
+        int size = fread(buf, 1, BUFFER_SIZE, fp);
         if(size == 0) {
             print_error("File %s not exist\n", buf);
         }
-        // if(size < 1024) buf[size] = '\0';
-        // printf("size: %d buf: %s\n", size, buf);
         
         fclose(fp);
-        start_id = (start_id + 1) % MOD;
     }
     gettimeofday(&end, NULL);
-    long timeuse = 1000000*(end.tv_sec - start.tv_sec) + end.tv_usec-start.tv_usec;
-    printf("Cost time: %ldus\n", timeuse);
+    long timeuse = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec-start.tv_usec;
+    if (once) printf("Cost time: %ldus\n", timeuse);
+    else return timeuse;
     return 0;
 }
 
-// hahah
+int tese_for_time() {
+    srand(0);
+    int test_times = 0, test_num = 0;
+    long MOD = 0;
+    unsigned long avg_time = 0;
+    printf("Test times, test num and MOD is:");
+    scanf("%d %d %ld", &test_times, &test_num, &MOD);
+    for(int i = 0; i < test_times; ++i) {
+        unsigned int seed = rand();
+        long timeuse = test_for_many_files(seed, false, test_num, MOD);
+        if(timeuse < 0) {
+            print_error("Failed\n");
+            return -1;
+        }
+        COUT_THIS("Test " << i << " time: " << timeuse);
+        avg_time += timeuse;
+    }
+    COUT_THIS("Avg time: " << avg_time / test_times);
+    return 0;
+}
+
+void test_for_all() {
+    char buf[BUFFER_SIZE + 7];
+    long test_file_num = 0;
+    printf("Max file num is:");
+    scanf("%ld", &test_file_num);
+    for(long i = 0; i < test_file_num; ++i) {
+        sprintf(buf, "%s/%s/%s%0*ld%s", PATH2PDIR, MOUNTDIR, FILEPREFIX, FILE_ID_LEN, i, FILESUFFIX);
+        FILE *fp = fopen(buf, "rb");
+        if(fp == NULL) {
+            print_error("Error on open file %s\n", buf);
+        }
+        int size = fread(buf, 1, BUFFER_SIZE, fp);
+        if(size == 0) {
+            print_error("File %s not exist\n", buf);
+        }
+        
+        fclose(fp);
+    }
+}
 
 int main() {
-    int test_case = 0;
-    printf("Test for one file(0) or range test(1):");
-    scanf("%d", &test_case);
-    if(!test_case) {
+    int test_type = 0;
+    printf("Test for:\none file(0) | multiple test(1) | time test(2) | all test(3):");
+    scanf("%d", &test_type);
+    if(test_type == 0) {
         return test_for_one_file();
     }
-    test_for_many_files();
+    else if(test_type == 1) {
+        return test_for_many_files();
+    }
+    else if(test_type == 2){
+        return tese_for_time();
+    }
+    else test_for_all();
+    return 0;
 }

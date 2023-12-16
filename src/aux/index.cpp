@@ -1,7 +1,7 @@
 #include "index.h"
 
-int init(struct needle_index_list *index_list) {
-    printf("Init start!\n");
+int64_t init(struct needle_index_list *index_list) {
+    COUT_THIS("Init start!");
     char path[1024];
 	sprintf(path, "%s/%s/%s", PATH2PDIR, OPDIR, INDEXFILE);
 
@@ -11,17 +11,13 @@ int init(struct needle_index_list *index_list) {
 		return -1;
 	}
 
-    fread(&(index_list->size), sizeof(long), 1, index_file);
-    index_list->indexs.resize(index_list->size);
-
-	// if(index_list->indexs == NULL) {
-	// 	print_error("Error on malloc needle index\n");
-	// 	return -1;
-	// }
+    fread(&(index_list->index_num), sizeof(uint64_t), 1, index_file);
+    index_list->indexs.resize(index_list->index_num);
+    DEBUG_THIS("index num: " << index_list->index_num);
 
 	// 读入 index 文件
-    for(long index_size = 0; index_size < index_list->size; ++index_size) {
-		read_needle_index(&(index_list->indexs[index_size]), index_file);
+    for(size_t index_i = 0; index_i < index_list->index_num; ++index_i) {
+		read_needle_index(&(index_list->indexs[index_i]), index_file);
 	}
 	fclose(index_file);
 
@@ -31,6 +27,7 @@ int init(struct needle_index_list *index_list) {
     sprintf(path, "%s/%s/%s", PATH2PDIR, OPDIR, DATAFILE);
 	index_list->data_file = fopen(path, "rb");
 	if(index_list->data_file == NULL) {
+        fclose(index_file);
         release_needle(index_list);
 		print_error("Error on open data file.\n");
 		return -1;
@@ -38,26 +35,33 @@ int init(struct needle_index_list *index_list) {
 
     // 初始化 cache
     index_list->is_cached = 0;
-    index_list->cached_item = NULL;
+    index_list->cached_item = nullptr;
 
-	return index_list->size;
+	return index_list->index_num;
 }
 
 sindex_t *get_sindex_model(std::vector<struct needle_index> &indexs){
-    // 转化
+    // 构造 keys 和 vals
     std::vector<index_key_t> keys(indexs.size());
     for(size_t i = 0; i < indexs.size(); ++i) {
-        keys[i].set_key(indexs[i].filename);
+        keys[i] = indexs[i].filename;
     }
     std::vector<uint64_t> vals(indexs.size());
     std::iota(vals.begin(), vals.end(), 0);
-    return new sindex_t(keys, vals, 1);
+    DEBUG_THIS("Index size: " << indexs.size());
+    return new sindex_t(keys, vals, indexs);
 }
 
 struct needle_index *find_index(struct needle_index_list *index_list, const char *filename, sindex_t *index_model){
     uint64_t pos = 0;
-    if(index_model->get(index_key_t(filename), pos, 1)) {
+    if(index_model->get(index_key_t(filename), pos)) {
         return &(index_list->indexs[pos]);
     }
     return nullptr;
+}
+
+void release_needle(struct needle_index_list *index_list) {
+    if(index_list->data_file) fclose(index_list->data_file);
+    index_list->data_file = nullptr;
+    index_list->cached_item = nullptr;
 }
