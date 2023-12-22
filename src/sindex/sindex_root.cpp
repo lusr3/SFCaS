@@ -12,10 +12,11 @@ void Root<key_t, val_t>::init(const std::vector<key_t> &keys,
                                    std::vector<struct needle_index> &indexs) {
   std::vector<size_t> pivot_indexes;
   // 贪心分组得到每个组的 pivot 
-  grouping_by_partial_key(keys, config.group_error_bound,
-                          config.partial_len_bound, config.forward_step,
-                          config.backward_step, config.group_min_size,
-                          pivot_indexes);
+  grouping_director(keys, pivot_indexes);
+  // grouping_by_partial_key(keys, config.group_error_bound,
+  //                         config.partial_len_bound, config.forward_step,
+  //                         config.backward_step, config.group_min_size,
+  //                         pivot_indexes);
 
   group_n = pivot_indexes.size();
   COUT_THIS("The number of groups: " << group_n);
@@ -61,9 +62,10 @@ inline void Root<key_t, val_t>::train_piecewise_model() {
     pivots[g_i] = get_group_pivot(g_i);
   }
   // 将 pivots 分组
-  grouping_by_partial_key(pivots, config.group_error_bound,
-                          config.partial_len_bound, config.forward_step,
-                          config.backward_step, config.group_min_size, indexes);
+  grouping_director(pivots, indexes);
+  // grouping_by_partial_key(pivots, config.group_error_bound,
+  //                         config.partial_len_bound, config.forward_step,
+  //                         config.backward_step, config.group_min_size, indexes);
 
   // 限制模型数量在 4 个及以下
   if (indexes.size() > max_root_model_n) {
@@ -141,28 +143,64 @@ inline void Root<key_t, val_t>::train_piecewise_model() {
   }
 }
 
-// 最重要的是找到每个组的 pivot 下标
 template <class key_t, class val_t>
-inline void Root<key_t, val_t>::grouping_by_partial_key(
+inline void Root<key_t, val_t>::grouping_director(const std::vector<key_t> &keys,
+                                                  std::vector<size_t> &indexes) {
+  size_t key_start = 0, key_end = 0;
+  if(!config.is_mem_limit) {
+    std::vector<double> model_keys(keys.size() * sizeof(key_t));
+    for (size_t k_i = 0; k_i < keys.size(); ++k_i) {
+      keys[k_i].get_model_key(0, sizeof(key_t),
+                              model_keys.data() + sizeof(key_t) * k_i);
+    }
+    grouping_by_partial_key(false, model_keys, key_start, keys.size(), 
+                          keys, config.group_error_bound,
+                          config.partial_len_bound, config.forward_step,
+                          config.backward_step, config.group_min_size, indexes);
+  }
+  else {
+    while(key_end < keys.size()) {
+      key_end = (key_start + config.max_to_group_num < keys.size()) ? 
+                  key_start + config.max_to_group_num
+                : keys.size();
+      size_t key_size = key_end - key_start;
+      std::vector<double> model_keys(key_size * sizeof(key_t));
+      for (size_t k_i = 0; k_i < key_size; ++k_i) {
+        keys[key_start + k_i].get_model_key(0, sizeof(key_t),
+                                model_keys.data() + sizeof(key_t) * k_i);
+      }
+      grouping_by_partial_key(key_end != keys.size(), model_keys, key_start, key_size, 
+                          keys, config.group_error_bound,
+                          config.partial_len_bound, config.forward_step,
+                          config.backward_step, config.group_min_size, indexes);
+    }
+  }
+}
+
+// 最重要的是找到每个组的 pivot 下标
+// [key_start, key_end)
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::grouping_by_partial_key(bool is_limit,
+    const std::vector<double> model_keys, size_t &key_start, size_t key_size,
     const std::vector<key_t> &keys, size_t et, size_t pt, size_t fstep,
     size_t bstep, size_t min_size, std::vector<size_t> &pivot_indexes) const {
-  pivot_indexes.clear();
-  size_t start_i = 0, end_i = 0;
+  // pivot_indexes.clear();
+  size_t start_i = key_start, end_i = key_start, key_end = key_start + key_size;
   size_t common_p_len = 0, max_p_len = 0, f_len = 0;
   double group_error = 0;
-  double avg_group_size = 0, avg_f_len = 0;
+  // double avg_group_size = 0, avg_f_len = 0;
   std::unordered_map<size_t, size_t> common_p_history;
   std::unordered_map<size_t, size_t> max_p_history;
 
   // prepare model keys for training
-  std::vector<double> model_keys(keys.size() * sizeof(key_t));
-  for (size_t k_i = 0; k_i < keys.size(); ++k_i) {
-    keys[k_i].get_model_key(0, sizeof(key_t),
-                            model_keys.data() + sizeof(key_t) * k_i);
-  }
+  // std::vector<double> model_keys(keys.size() * sizeof(key_t));
+  // for (size_t k_i = 0; k_i < keys.size(); ++k_i) {
+  //   keys[k_i].get_model_key(0, sizeof(key_t),
+  //                           model_keys.data() + sizeof(key_t) * k_i);
+  // }
 
-  // 遍历所有 keys
-  while (end_i < keys.size()) {
+  // 遍历当前的所有 keys
+  while (end_i < key_end) {
     common_p_len = 0;
     max_p_len = 0;
     f_len = 0;
@@ -175,9 +213,9 @@ inline void Root<key_t, val_t>::grouping_by_partial_key(
       size_t pre_end_i = end_i;
       end_i += fstep;
       // 到达末尾的部分并入最后一个 group 中（不用管阈值）
-      if (end_i >= keys.size()) {
-        DEBUG_THIS("[Grouping] reach end. last group size= "
-                   << (keys.size() - start_i));
+      if (end_i > key_end) {
+        // DEBUG_THIS("[Grouping] reach end. last group size= "
+        //            << (keys.size() - start_i));
         break;
       }
       // 得到公共前缀和最长公共前缀
@@ -193,12 +231,13 @@ inline void Root<key_t, val_t>::grouping_by_partial_key(
     // group_error 没有作用
     // 如果是到达尾部 break 不会进入这里
     while (f_len > pt || group_error > et) {
-      if (end_i >= keys.size()) {
-        DEBUG_THIS("[Grouping] reach end. last group size= "
-                   << (keys.size() - start_i));
+      if (end_i > key_end) {
+        // DEBUG_THIS("[Grouping] reach end. last group size= "
+        //            << (keys.size() - start_i));
         break;
       }
       // 达不到最小 group 的阈值需求则直接给够
+      // 可能会有 bug 需要注意
       if (end_i - start_i < min_size) {
         end_i = start_i + min_size;
         break;
@@ -214,16 +253,15 @@ inline void Root<key_t, val_t>::grouping_by_partial_key(
 
     // 只保证满足这两个条件，所计算的前缀长并不保证，所以后面还需要再次计算
     assert(f_len <= pt || end_i - start_i == min_size);
-    pivot_indexes.push_back(start_i);
-    avg_group_size += (end_i - start_i);
-    avg_f_len += f_len;
-    start_i = end_i;
+    // 如果内存有限制，且到达当前可用 keys 的末尾
+    // 则限定下一次的开头
+    if(end_i > key_end && is_limit) key_start = start_i;
+    else {
+      pivot_indexes.push_back(start_i);
+      start_i = end_i;
+      key_start = start_i;
+    }
   }
-
-  DEBUG_THIS("[Grouping] group number="
-             << pivot_indexes.size()
-             << ", avg_group_size=" << avg_group_size / pivot_indexes.size()
-             << ", avg_f_len=" << avg_f_len / pivot_indexes.size());
 }
 
 // 计算每一步的公共和最长前缀和

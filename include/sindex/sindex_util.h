@@ -27,6 +27,10 @@ struct IndexConfig {
   size_t forward_step = 550;
   size_t backward_step = 50;
   size_t group_min_size = 400;
+  // for limited memory
+  // 小内存机器上参数越大时间越久
+  size_t max_to_group_num = 100000;
+  bool is_mem_limit = true;
 };
 
 const index_config_t config;
