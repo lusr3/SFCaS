@@ -22,6 +22,8 @@ struct IndexConfig {
   double group_error_bound = 32;
   double group_error_tolerance = 4;
 
+  // partial_len_bound 和 max_to_group_num 必须相适应
+  // 不然分批次 group 在 pt 过大时会有死循环（因为全部都能 group 进去）
   // greedy grouping related
   size_t partial_len_bound = 4;
   size_t forward_step = 550;
@@ -29,8 +31,8 @@ struct IndexConfig {
   size_t group_min_size = 400;
   // for limited memory
   // 小内存机器上参数越大时间越久
-  size_t max_to_group_num = 100000;
-  bool is_mem_limit = true;
+  // size_t max_to_group_num = 100000;
+  // bool is_mem_limit = true;
 };
 
 const index_config_t config;

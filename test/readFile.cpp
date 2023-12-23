@@ -41,6 +41,7 @@ long test_for_many_files(unsigned int seed = 0, bool once = true, long num = 10,
     if(once) {
         printf("Test case num and max file num is:");
         scanf("%ld %ld", &test_num, &test_mod);
+        srand(test_num);
     }
     else {
         test_num = num;
@@ -75,12 +76,12 @@ long test_for_many_files(unsigned int seed = 0, bool once = true, long num = 10,
 }
 
 int tese_for_time() {
-    srand(0);
     int test_times = 0, test_num = 0;
     long MOD = 0;
     unsigned long avg_time = 0;
     printf("Test times, test num and MOD is:");
     scanf("%d %d %ld", &test_times, &test_num, &MOD);
+    srand(test_times);
     for(int i = 0; i < test_times; ++i) {
         unsigned int seed = rand();
         long timeuse = test_for_many_files(seed, false, test_num, MOD);

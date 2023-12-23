@@ -33,10 +33,7 @@ public:
 
 private:
   // train model
-  void grouping_director(const std::vector<key_t> &keys, std::vector<size_t> &indexes);
-  void grouping_by_partial_key(bool is_limit, const std::vector<double> model_keys, 
-                                      size_t &key_start, size_t key_size,
-                                      const std::vector<key_t> &keys, size_t et,
+  void grouping_by_partial_key(const std::vector<key_t> &keys, size_t et,
                                       size_t pt, size_t fstep, size_t bstep,
                                       size_t min_size,
                                       std::vector<size_t> &pivot_indexes) const;

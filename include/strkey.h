@@ -46,7 +46,7 @@ public:
 	}
 
 	char *get_name() {
-		return (char*) buf;
+		return buf;
 	}
 
 	std::string to_string() const {
@@ -69,26 +69,26 @@ public:
 	// compare
 	// 带起始位置和长度的比较
 	bool less_than(const StrKey &other, size_t begin_i, size_t l) const {
-		return memcmp(buf + begin_i, other.buf + begin_i, l) < 0;
+		return strncmp(buf + begin_i, other.buf + begin_i, l) < 0;
 	}
 
 	friend bool operator<(const StrKey &l, const StrKey &r) {
-		return memcmp(&l.buf, &r.buf, len) < 0;
+		return strcmp(l.buf, r.buf) < 0;
 	}
 	friend bool operator>(const StrKey &l, const StrKey &r) {
-		return memcmp(&l.buf, &r.buf, len) > 0;
+		return strcmp(l.buf, r.buf) > 0;
 	}
 	friend bool operator>=(const StrKey &l, const StrKey &r) {
-		return memcmp(&l.buf, &r.buf, len) >= 0;
+		return strcmp(l.buf, r.buf) >= 0;
 	}
 	friend bool operator<=(const StrKey &l, const StrKey &r) {
-		return memcmp(&l.buf, &r.buf, len) <= 0;
+		return strcmp(l.buf, r.buf) <= 0;
 	}
 	friend bool operator==(const StrKey &l, const StrKey &r) {
-		return memcmp(&l.buf, &r.buf, len) == 0;
+		return strcmp(l.buf, r.buf) == 0;
 	}
 	friend bool operator!=(const StrKey &l, const StrKey &r) {
-		return memcmp(&l.buf, &r.buf, len) != 0;
+		return strcmp(l.buf, r.buf) != 0;
 	}
 
 	friend std::ostream &operator<<(std::ostream &os, const StrKey &key) {
@@ -96,7 +96,7 @@ public:
 		return os;
 	}
 
-	uint8_t buf[len];
+	char buf[len];
 };
 
 typedef StrKey<MAX_FILE_LEN + 1> index_key_t;
