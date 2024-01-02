@@ -96,13 +96,13 @@ int tese_for_time() {
     return 0;
 }
 
-void test_for_all() {
+void test_for_range() {
     char buf[BUFFER_SIZE + 7];
-    long test_file_num = 0;
-    printf("Max file num is:");
-    scanf("%ld", &test_file_num);
+    long start = 0, test_file_num = 0;
+    printf("Start file and num is:");
+    scanf("%ld %ld", &start, &test_file_num);
     for(long i = 0; i < test_file_num; ++i) {
-        sprintf(buf, "%s/%s/%s%0*ld%s", PATH2PDIR, MOUNTDIR, FILEPREFIX, FILE_ID_LEN, i, FILESUFFIX);
+        sprintf(buf, "%s/%s/%s%0*ld%s", PATH2PDIR, MOUNTDIR, FILEPREFIX, FILE_ID_LEN, i + start, FILESUFFIX);
         FILE *fp = fopen(buf, "rb");
         if(fp == NULL) {
             print_error("Error on open file %s\n", buf);
@@ -118,7 +118,7 @@ void test_for_all() {
 
 int main() {
     int test_type = 0;
-    printf("Test for:\none file(0) | multiple test(1) | time test(2) | all test(3):");
+    printf("Test for:\none file(0) | multiple test(1) | time test(2) | range test(3):");
     scanf("%d", &test_type);
     if(test_type == 0) {
         return test_for_one_file();
@@ -129,6 +129,6 @@ int main() {
     else if(test_type == 2){
         return tese_for_time();
     }
-    else test_for_all();
+    else test_for_range();
     return 0;
 }

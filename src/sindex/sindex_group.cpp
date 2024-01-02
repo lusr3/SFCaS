@@ -127,7 +127,7 @@ inline void Group<key_t, val_t>::prepare_last(
   for (size_t key_i = 0; key_i < model_key_ptrs.size(); ++key_i) {
     long long int pos_actual = positions[key_i];
     long long int pos_pred = predict(model_key_ptrs[key_i]);
-    long long int error = pos_pred - pos_actual;
+    long long int error = pos_actual - pos_pred;
     if (error > pos_error) pos_error = error;
     if (error < neg_error) neg_error = error;
   }
@@ -137,60 +137,34 @@ inline void Group<key_t, val_t>::prepare_last(
 template <class key_t, class val_t>
 inline result_t Group<key_t, val_t>::get(
   const key_t &key, val_t &val) {
-  if (get_from_array(key, val)) {
-    return result_t::ok;
-  }
-  return result_t::failed;
-}
-
-// semantics: atomically read the value
-// only when the key exists and the record (record_t) is not logical removed,
-// return true on success
-template <class key_t, class val_t>
-inline bool Group<key_t, val_t>::get_from_array(
-    const key_t &key, val_t &val) {
-  size_t pos = get_pos_from_array(key);
-  // position is valid (not out-of-range)
-  // key matches, must use full key comparison here
+  int64_t pos_pred = predict(key);
+  int64_t search_begin = pos_pred + max_neg_error,
+  search_end = pos_pred + max_pos_error;
+  // search within the range
+  if(search_begin < 0) search_begin = 0;
+  if(search_begin > (int64_t)this->array_size) search_begin = this->array_size;
+  if(search_end < 0) search_end = 0;
+  if(search_end > (int64_t)this->array_size) search_end = this->array_size;
+  // 在预测出来的 pos 和误差范围内二分查找
+  size_t pos = binary_search_key(key, pos_pred, search_begin, search_end);
   DEBUG_THIS("predict pos: " << pos);
   DEBUG_THIS("predict name: " << needle_begin[pos].filename);
   DEBUG_THIS("actual name: " << key);
   if(pos != array_size && needle_begin[pos].filename == key) {
     val = start + pos;
-    return true;
+    return result_t::ok;
   }
-  return false;
+  return result_t::failed;
 }
 
-template <class key_t, class val_t>
-inline size_t Group<key_t, val_t>::get_pos_from_array(
-    const key_t &key) {
-  // 必须用有符号的不然下面的计算会出错
-  int64_t pos = predict(key);
-  int64_t search_begin = pos + max_neg_error,
-  search_end = pos + max_pos_error + 1;
-  if(search_begin < 0) search_begin = 0;
-  if(search_end > array_size) search_end = array_size;
-  // 在预测出来的 pos 和误差范围内二分查找
-  return binary_search_key(key, pos, search_begin, search_end);
-}
-
-// [search_begin, search_end)
+// [search_begin, search_end]
 template <class key_t, class val_t>
 inline size_t Group<key_t, val_t>::binary_search_key(
     const key_t &key, size_t pos, size_t search_begin, size_t search_end) {
-  // search within the range
-  if (search_begin > array_size) {
-    search_begin = array_size;
-  }
-  if (search_end > array_size) {
-    search_end = array_size;
-  }
   assert(search_begin <= search_end);
-  size_t mid = pos >= search_begin && pos < search_end
-                   ? pos
-                   : (search_begin + search_end) / 2;
+  size_t mid = pos;
   while (search_end != search_begin) {
+    DEBUG_THIS("begin: " << search_begin << " end: " << search_end);
     if (needle_begin[mid].filename.less_than(key, prefix_len, feature_len)) {
       search_begin = mid + 1;
     } else {
