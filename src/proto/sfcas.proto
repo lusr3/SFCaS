@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package sfcas_dfs;
+
+message LocationRequest {
+    string filename = 1;
+}
+
+message LocationReply {
+    string ip = 1;
+    string port = 2;
+}
+
+message DataRequest {
+    string filename = 1;
+    uint64 offset = 2;
+    uint64 size = 3;
+}
+
+// 可能需要 stream 类型？
+message DataReply {
+    bytes chunk = 1;
+}
+
+service FileAccess {
+    rpc get_file_location(LocationRequest) returns (LocationReply) {}
+
+    rpc get_data(DataRequest) returns (stream DataReply) {}
+}
+

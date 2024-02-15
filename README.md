@@ -10,18 +10,22 @@
 
 - 安装 MKL(Math Kernel Library)，同时根据安装的目录和版本修改 `Makefile`
 
-	```makefile
-	MKL_INCLUDE_DIR := /opt/intel/oneapi/mkl/*/include
-	MKL_LIB_DIR := /opt/intel/oneapi/mkl/*/lib/intel64
-	```
+  > 可以通过下载 `l_onemkl_p_2023.2.0.49497_offline.sh` 并执行命令 `sh l_onemkl_p_2023.2.0.49497_offline.sh` 进行安装
 
-	可能还需要初始化 MKL 的环境变量：
+  ```makefile
+  MKL_INCLUDE_DIR := /opt/intel/oneapi/mkl/2023.2.0/include
+  MKL_LIB_DIR := /opt/intel/oneapi/mkl/2023.2.0/lib/intel64
+  ```
 
-	```bash
-	source /opt/intel/oneapi/setvars.sh
-	```
+  可能还需要初始化 MKL 的环境变量：
+
+  ```bash
+  source /opt/intel/oneapi/setvars.sh
+  ```
 
 - 下载安装 libfuse 库：[libfuse/libfuse: The reference implementation of the Linux FUSE (Filesystem in Userspace) interface (github.com)](https://github.com/libfuse/libfuse)
+
+- gRPC 安装：[Quick start | C++ | gRPC](https://grpc.io/docs/languages/cpp/quickstart/)
 
 
 
