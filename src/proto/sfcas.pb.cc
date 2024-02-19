@@ -22,7 +22,32 @@ namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
 namespace sfcas_dfs {
 
-inline constexpr LocationRequest::Impl_::Impl_(
+inline constexpr StartUpMsg::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        address_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        filename_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        file_size_{::uint64_t{0u}} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR StartUpMsg::StartUpMsg(::_pbi::ConstantInitialized)
+    : _impl_(::_pbi::ConstantInitialized()) {}
+struct StartUpMsgDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR StartUpMsgDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~StartUpMsgDefaultTypeInternal() {}
+  union {
+    StartUpMsg _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StartUpMsgDefaultTypeInternal _StartUpMsg_default_instance_;
+
+inline constexpr MetaDataRequest::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : filename_(
             &::google::protobuf::internal::fixed_address_empty_string,
@@ -30,42 +55,40 @@ inline constexpr LocationRequest::Impl_::Impl_(
         _cached_size_{0} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR LocationRequest::LocationRequest(::_pbi::ConstantInitialized)
+PROTOBUF_CONSTEXPR MetaDataRequest::MetaDataRequest(::_pbi::ConstantInitialized)
     : _impl_(::_pbi::ConstantInitialized()) {}
-struct LocationRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR LocationRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~LocationRequestDefaultTypeInternal() {}
+struct MetaDataRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR MetaDataRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~MetaDataRequestDefaultTypeInternal() {}
   union {
-    LocationRequest _instance;
+    MetaDataRequest _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LocationRequestDefaultTypeInternal _LocationRequest_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 MetaDataRequestDefaultTypeInternal _MetaDataRequest_default_instance_;
 
-inline constexpr LocationReply::Impl_::Impl_(
+inline constexpr MetaDataReply::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : ip_(
+      : address_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        port_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        file_size_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR LocationReply::LocationReply(::_pbi::ConstantInitialized)
+PROTOBUF_CONSTEXPR MetaDataReply::MetaDataReply(::_pbi::ConstantInitialized)
     : _impl_(::_pbi::ConstantInitialized()) {}
-struct LocationReplyDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR LocationReplyDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~LocationReplyDefaultTypeInternal() {}
+struct MetaDataReplyDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR MetaDataReplyDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~MetaDataReplyDefaultTypeInternal() {}
   union {
-    LocationReply _instance;
+    MetaDataReply _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LocationReplyDefaultTypeInternal _LocationReply_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 MetaDataReplyDefaultTypeInternal _MetaDataReply_default_instance_;
 
 inline constexpr DataRequest::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -111,7 +134,7 @@ struct DataReplyDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DataReplyDefaultTypeInternal _DataReply_default_instance_;
 }  // namespace sfcas_dfs
-static ::_pb::Metadata file_level_metadata_sfcas_2eproto[4];
+static ::_pb::Metadata file_level_metadata_sfcas_2eproto[5];
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_sfcas_2eproto = nullptr;
 static constexpr const ::_pb::ServiceDescriptor**
@@ -119,24 +142,38 @@ static constexpr const ::_pb::ServiceDescriptor**
 const ::uint32_t TableStruct_sfcas_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     protodesc_cold) = {
     ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::LocationRequest, _internal_metadata_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::MetaDataRequest, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
     ~0u,  // no _weak_field_map_
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::LocationRequest, _impl_.filename_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::MetaDataRequest, _impl_.filename_),
     ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::LocationReply, _internal_metadata_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::MetaDataReply, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
     ~0u,  // no _weak_field_map_
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::LocationReply, _impl_.ip_),
-    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::LocationReply, _impl_.port_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::MetaDataReply, _impl_.address_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::MetaDataReply, _impl_.file_size_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::StartUpMsg, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::StartUpMsg, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::StartUpMsg, _impl_.address_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::StartUpMsg, _impl_.filename_),
+    PROTOBUF_FIELD_OFFSET(::sfcas_dfs::StartUpMsg, _impl_.file_size_),
+    ~0u,
+    0,
+    1,
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::sfcas_dfs::DataRequest, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -161,40 +198,54 @@ const ::uint32_t TableStruct_sfcas_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        {0, -1, -1, sizeof(::sfcas_dfs::LocationRequest)},
-        {9, -1, -1, sizeof(::sfcas_dfs::LocationReply)},
-        {19, -1, -1, sizeof(::sfcas_dfs::DataRequest)},
-        {30, -1, -1, sizeof(::sfcas_dfs::DataReply)},
+        {0, -1, -1, sizeof(::sfcas_dfs::MetaDataRequest)},
+        {9, -1, -1, sizeof(::sfcas_dfs::MetaDataReply)},
+        {19, 30, -1, sizeof(::sfcas_dfs::StartUpMsg)},
+        {33, -1, -1, sizeof(::sfcas_dfs::DataRequest)},
+        {44, -1, -1, sizeof(::sfcas_dfs::DataReply)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-    &::sfcas_dfs::_LocationRequest_default_instance_._instance,
-    &::sfcas_dfs::_LocationReply_default_instance_._instance,
+    &::sfcas_dfs::_MetaDataRequest_default_instance_._instance,
+    &::sfcas_dfs::_MetaDataReply_default_instance_._instance,
+    &::sfcas_dfs::_StartUpMsg_default_instance_._instance,
     &::sfcas_dfs::_DataRequest_default_instance_._instance,
     &::sfcas_dfs::_DataReply_default_instance_._instance,
 };
 const char descriptor_table_protodef_sfcas_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-    "\n\013sfcas.proto\022\tsfcas_dfs\"#\n\017LocationRequ"
-    "est\022\020\n\010filename\030\001 \001(\t\")\n\rLocationReply\022\n"
-    "\n\002ip\030\001 \001(\t\022\014\n\004port\030\002 \001(\t\"=\n\013DataRequest\022"
-    "\020\n\010filename\030\001 \001(\t\022\016\n\006offset\030\002 \001(\004\022\014\n\004siz"
-    "e\030\003 \001(\004\"\032\n\tDataReply\022\r\n\005chunk\030\001 \001(\0142\227\001\n\n"
-    "FileAccess\022K\n\021get_file_location\022\032.sfcas_"
-    "dfs.LocationRequest\032\030.sfcas_dfs.Location"
-    "Reply\"\000\022<\n\010get_data\022\026.sfcas_dfs.DataRequ"
-    "est\032\024.sfcas_dfs.DataReply\"\0000\001b\006proto3"
+    "\n\013sfcas.proto\022\tsfcas_dfs\032\033google/protobu"
+    "f/empty.proto\"#\n\017MetaDataRequest\022\020\n\010file"
+    "name\030\001 \001(\t\"3\n\rMetaDataReply\022\017\n\007address\030\001"
+    " \001(\t\022\021\n\tfile_size\030\002 \001(\004\"g\n\nStartUpMsg\022\017\n"
+    "\007address\030\001 \001(\t\022\025\n\010filename\030\002 \001(\tH\000\210\001\001\022\026\n"
+    "\tfile_size\030\003 \001(\004H\001\210\001\001B\013\n\t_filenameB\014\n\n_f"
+    "ile_size\"=\n\013DataRequest\022\020\n\010filename\030\001 \001("
+    "\t\022\016\n\006offset\030\002 \001(\004\022\014\n\004size\030\003 \001(\004\"\032\n\tDataR"
+    "eply\022\r\n\005chunk\030\001 \001(\0142\243\002\n\nFileAccess\022D\n\021co"
+    "nnect_to_master\022\025.sfcas_dfs.StartUpMsg\032\026"
+    ".google.protobuf.Empty\"\000\022D\n\017upload_metad"
+    "ata\022\025.sfcas_dfs.StartUpMsg\032\026.google.prot"
+    "obuf.Empty\"\000(\001\022K\n\021get_file_metadata\022\032.sf"
+    "cas_dfs.MetaDataRequest\032\030.sfcas_dfs.Meta"
+    "DataReply\"\000\022<\n\010get_data\022\026.sfcas_dfs.Data"
+    "Request\032\024.sfcas_dfs.DataReply\"\0000\001b\006proto"
+    "3"
+};
+static const ::_pbi::DescriptorTable* const descriptor_table_sfcas_2eproto_deps[1] =
+    {
+        &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
 };
 static ::absl::once_flag descriptor_table_sfcas_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_sfcas_2eproto = {
     false,
     false,
-    357,
+    641,
     descriptor_table_protodef_sfcas_2eproto,
     "sfcas.proto",
     &descriptor_table_sfcas_2eproto_once,
-    nullptr,
-    0,
-    4,
+    descriptor_table_sfcas_2eproto_deps,
+    1,
+    5,
     schemas,
     file_default_instances,
     TableStruct_sfcas_2eproto::offsets,
@@ -223,55 +274,55 @@ static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_sfcas_2eproto(&descriptor
 namespace sfcas_dfs {
 // ===================================================================
 
-class LocationRequest::_Internal {
+class MetaDataRequest::_Internal {
  public:
 };
 
-LocationRequest::LocationRequest(::google::protobuf::Arena* arena)
+MetaDataRequest::MetaDataRequest(::google::protobuf::Arena* arena)
     : ::google::protobuf::Message(arena) {
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:sfcas_dfs.LocationRequest)
+  // @@protoc_insertion_point(arena_constructor:sfcas_dfs.MetaDataRequest)
 }
-inline PROTOBUF_NDEBUG_INLINE LocationRequest::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE MetaDataRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from)
       : filename_(arena, from.filename_),
         _cached_size_{0} {}
 
-LocationRequest::LocationRequest(
+MetaDataRequest::MetaDataRequest(
     ::google::protobuf::Arena* arena,
-    const LocationRequest& from)
+    const MetaDataRequest& from)
     : ::google::protobuf::Message(arena) {
-  LocationRequest* const _this = this;
+  MetaDataRequest* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_);
 
-  // @@protoc_insertion_point(copy_constructor:sfcas_dfs.LocationRequest)
+  // @@protoc_insertion_point(copy_constructor:sfcas_dfs.MetaDataRequest)
 }
-inline PROTOBUF_NDEBUG_INLINE LocationRequest::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE MetaDataRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : filename_(arena),
         _cached_size_{0} {}
 
-inline void LocationRequest::SharedCtor(::_pb::Arena* arena) {
+inline void MetaDataRequest::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
 }
-LocationRequest::~LocationRequest() {
-  // @@protoc_insertion_point(destructor:sfcas_dfs.LocationRequest)
+MetaDataRequest::~MetaDataRequest() {
+  // @@protoc_insertion_point(destructor:sfcas_dfs.MetaDataRequest)
   _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   SharedDtor();
 }
-inline void LocationRequest::SharedDtor() {
+inline void MetaDataRequest::SharedDtor() {
   ABSL_DCHECK(GetArena() == nullptr);
   _impl_.filename_.Destroy();
   _impl_.~Impl_();
 }
 
-PROTOBUF_NOINLINE void LocationRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:sfcas_dfs.LocationRequest)
+PROTOBUF_NOINLINE void MetaDataRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:sfcas_dfs.MetaDataRequest)
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -281,7 +332,7 @@ PROTOBUF_NOINLINE void LocationRequest::Clear() {
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
-const char* LocationRequest::_InternalParse(
+const char* MetaDataRequest::_InternalParse(
     const char* ptr, ::_pbi::ParseContext* ctx) {
   ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
   return ptr;
@@ -289,7 +340,7 @@ const char* LocationRequest::_InternalParse(
 
 
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 0, 42, 2> LocationRequest::_table_ = {
+const ::_pbi::TcParseTable<0, 1, 0, 42, 2> MetaDataRequest::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -300,31 +351,31 @@ const ::_pbi::TcParseTable<0, 1, 0, 42, 2> LocationRequest::_table_ = {
     1,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
-    &_LocationRequest_default_instance_._instance,
+    &_MetaDataRequest_default_instance_._instance,
     ::_pbi::TcParser::GenericFallback,  // fallback
   }, {{
     // string filename = 1;
     {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(LocationRequest, _impl_.filename_)}},
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(MetaDataRequest, _impl_.filename_)}},
   }}, {{
     65535, 65535
   }}, {{
     // string filename = 1;
-    {PROTOBUF_FIELD_OFFSET(LocationRequest, _impl_.filename_), 0, 0,
+    {PROTOBUF_FIELD_OFFSET(MetaDataRequest, _impl_.filename_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
     "\31\10\0\0\0\0\0\0"
-    "sfcas_dfs.LocationRequest"
+    "sfcas_dfs.MetaDataRequest"
     "filename"
   }},
 };
 
-::uint8_t* LocationRequest::_InternalSerialize(
+::uint8_t* MetaDataRequest::_InternalSerialize(
     ::uint8_t* target,
     ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:sfcas_dfs.LocationRequest)
+  // @@protoc_insertion_point(serialize_to_array_start:sfcas_dfs.MetaDataRequest)
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
 
@@ -332,7 +383,7 @@ const ::_pbi::TcParseTable<0, 1, 0, 42, 2> LocationRequest::_table_ = {
   if (!this->_internal_filename().empty()) {
     const std::string& _s = this->_internal_filename();
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sfcas_dfs.LocationRequest.filename");
+        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sfcas_dfs.MetaDataRequest.filename");
     target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
@@ -341,12 +392,12 @@ const ::_pbi::TcParseTable<0, 1, 0, 42, 2> LocationRequest::_table_ = {
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
             _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:sfcas_dfs.LocationRequest)
+  // @@protoc_insertion_point(serialize_to_array_end:sfcas_dfs.MetaDataRequest)
   return target;
 }
 
-::size_t LocationRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:sfcas_dfs.LocationRequest)
+::size_t MetaDataRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sfcas_dfs.MetaDataRequest)
   ::size_t total_size = 0;
 
   ::uint32_t cached_has_bits = 0;
@@ -362,18 +413,18 @@ const ::_pbi::TcParseTable<0, 1, 0, 42, 2> LocationRequest::_table_ = {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::google::protobuf::Message::ClassData LocationRequest::_class_data_ = {
-    LocationRequest::MergeImpl,
+const ::google::protobuf::Message::ClassData MetaDataRequest::_class_data_ = {
+    MetaDataRequest::MergeImpl,
     nullptr,  // OnDemandRegisterArenaDtor
 };
-const ::google::protobuf::Message::ClassData* LocationRequest::GetClassData() const {
+const ::google::protobuf::Message::ClassData* MetaDataRequest::GetClassData() const {
   return &_class_data_;
 }
 
-void LocationRequest::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
-  auto* const _this = static_cast<LocationRequest*>(&to_msg);
-  auto& from = static_cast<const LocationRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:sfcas_dfs.LocationRequest)
+void MetaDataRequest::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
+  auto* const _this = static_cast<MetaDataRequest*>(&to_msg);
+  auto& from = static_cast<const MetaDataRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:sfcas_dfs.MetaDataRequest)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -384,21 +435,21 @@ void LocationRequest::MergeImpl(::google::protobuf::Message& to_msg, const ::goo
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void LocationRequest::CopyFrom(const LocationRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:sfcas_dfs.LocationRequest)
+void MetaDataRequest::CopyFrom(const MetaDataRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sfcas_dfs.MetaDataRequest)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-PROTOBUF_NOINLINE bool LocationRequest::IsInitialized() const {
+PROTOBUF_NOINLINE bool MetaDataRequest::IsInitialized() const {
   return true;
 }
 
-::_pbi::CachedSize* LocationRequest::AccessCachedSize() const {
+::_pbi::CachedSize* MetaDataRequest::AccessCachedSize() const {
   return &_impl_._cached_size_;
 }
-void LocationRequest::InternalSwap(LocationRequest* PROTOBUF_RESTRICT other) {
+void MetaDataRequest::InternalSwap(MetaDataRequest* PROTOBUF_RESTRICT other) {
   using std::swap;
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
@@ -406,76 +457,75 @@ void LocationRequest::InternalSwap(LocationRequest* PROTOBUF_RESTRICT other) {
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.filename_, &other->_impl_.filename_, arena);
 }
 
-::google::protobuf::Metadata LocationRequest::GetMetadata() const {
+::google::protobuf::Metadata MetaDataRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_sfcas_2eproto_getter, &descriptor_table_sfcas_2eproto_once,
       file_level_metadata_sfcas_2eproto[0]);
 }
 // ===================================================================
 
-class LocationReply::_Internal {
+class MetaDataReply::_Internal {
  public:
 };
 
-LocationReply::LocationReply(::google::protobuf::Arena* arena)
+MetaDataReply::MetaDataReply(::google::protobuf::Arena* arena)
     : ::google::protobuf::Message(arena) {
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:sfcas_dfs.LocationReply)
+  // @@protoc_insertion_point(arena_constructor:sfcas_dfs.MetaDataReply)
 }
-inline PROTOBUF_NDEBUG_INLINE LocationReply::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE MetaDataReply::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from)
-      : ip_(arena, from.ip_),
-        port_(arena, from.port_),
+      : address_(arena, from.address_),
         _cached_size_{0} {}
 
-LocationReply::LocationReply(
+MetaDataReply::MetaDataReply(
     ::google::protobuf::Arena* arena,
-    const LocationReply& from)
+    const MetaDataReply& from)
     : ::google::protobuf::Message(arena) {
-  LocationReply* const _this = this;
+  MetaDataReply* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_);
+  _impl_.file_size_ = from._impl_.file_size_;
 
-  // @@protoc_insertion_point(copy_constructor:sfcas_dfs.LocationReply)
+  // @@protoc_insertion_point(copy_constructor:sfcas_dfs.MetaDataReply)
 }
-inline PROTOBUF_NDEBUG_INLINE LocationReply::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE MetaDataReply::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : ip_(arena),
-        port_(arena),
+      : address_(arena),
         _cached_size_{0} {}
 
-inline void LocationReply::SharedCtor(::_pb::Arena* arena) {
+inline void MetaDataReply::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.file_size_ = {};
 }
-LocationReply::~LocationReply() {
-  // @@protoc_insertion_point(destructor:sfcas_dfs.LocationReply)
+MetaDataReply::~MetaDataReply() {
+  // @@protoc_insertion_point(destructor:sfcas_dfs.MetaDataReply)
   _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   SharedDtor();
 }
-inline void LocationReply::SharedDtor() {
+inline void MetaDataReply::SharedDtor() {
   ABSL_DCHECK(GetArena() == nullptr);
-  _impl_.ip_.Destroy();
-  _impl_.port_.Destroy();
+  _impl_.address_.Destroy();
   _impl_.~Impl_();
 }
 
-PROTOBUF_NOINLINE void LocationReply::Clear() {
-// @@protoc_insertion_point(message_clear_start:sfcas_dfs.LocationReply)
+PROTOBUF_NOINLINE void MetaDataReply::Clear() {
+// @@protoc_insertion_point(message_clear_start:sfcas_dfs.MetaDataReply)
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.ip_.ClearToEmpty();
-  _impl_.port_.ClearToEmpty();
+  _impl_.address_.ClearToEmpty();
+  _impl_.file_size_ = ::uint64_t{0u};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
-const char* LocationReply::_InternalParse(
+const char* MetaDataReply::_InternalParse(
     const char* ptr, ::_pbi::ParseContext* ctx) {
   ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
   return ptr;
@@ -483,7 +533,7 @@ const char* LocationReply::_InternalParse(
 
 
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 38, 2> LocationReply::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 39, 2> MetaDataReply::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -494,55 +544,53 @@ const ::_pbi::TcParseTable<1, 2, 0, 38, 2> LocationReply::_table_ = {
     2,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
-    &_LocationReply_default_instance_._instance,
+    &_MetaDataReply_default_instance_._instance,
     ::_pbi::TcParser::GenericFallback,  // fallback
   }, {{
-    // string port = 2;
+    // uint64 file_size = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(MetaDataReply, _impl_.file_size_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(MetaDataReply, _impl_.file_size_)}},
+    // string address = 1;
     {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(LocationReply, _impl_.port_)}},
-    // string ip = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(LocationReply, _impl_.ip_)}},
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(MetaDataReply, _impl_.address_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string ip = 1;
-    {PROTOBUF_FIELD_OFFSET(LocationReply, _impl_.ip_), 0, 0,
+    // string address = 1;
+    {PROTOBUF_FIELD_OFFSET(MetaDataReply, _impl_.address_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string port = 2;
-    {PROTOBUF_FIELD_OFFSET(LocationReply, _impl_.port_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // uint64 file_size = 2;
+    {PROTOBUF_FIELD_OFFSET(MetaDataReply, _impl_.file_size_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
   }},
   // no aux_entries
   {{
-    "\27\2\4\0\0\0\0\0"
-    "sfcas_dfs.LocationReply"
-    "ip"
-    "port"
+    "\27\7\0\0\0\0\0\0"
+    "sfcas_dfs.MetaDataReply"
+    "address"
   }},
 };
 
-::uint8_t* LocationReply::_InternalSerialize(
+::uint8_t* MetaDataReply::_InternalSerialize(
     ::uint8_t* target,
     ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:sfcas_dfs.LocationReply)
+  // @@protoc_insertion_point(serialize_to_array_start:sfcas_dfs.MetaDataReply)
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
 
-  // string ip = 1;
-  if (!this->_internal_ip().empty()) {
-    const std::string& _s = this->_internal_ip();
+  // string address = 1;
+  if (!this->_internal_address().empty()) {
+    const std::string& _s = this->_internal_address();
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sfcas_dfs.LocationReply.ip");
+        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sfcas_dfs.MetaDataReply.address");
     target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
-  // string port = 2;
-  if (!this->_internal_port().empty()) {
-    const std::string& _s = this->_internal_port();
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sfcas_dfs.LocationReply.port");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
+  // uint64 file_size = 2;
+  if (this->_internal_file_size() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+        2, this->_internal_file_size(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -550,85 +598,354 @@ const ::_pbi::TcParseTable<1, 2, 0, 38, 2> LocationReply::_table_ = {
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
             _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:sfcas_dfs.LocationReply)
+  // @@protoc_insertion_point(serialize_to_array_end:sfcas_dfs.MetaDataReply)
   return target;
 }
 
-::size_t LocationReply::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:sfcas_dfs.LocationReply)
+::size_t MetaDataReply::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sfcas_dfs.MetaDataReply)
   ::size_t total_size = 0;
 
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string ip = 1;
-  if (!this->_internal_ip().empty()) {
+  // string address = 1;
+  if (!this->_internal_address().empty()) {
     total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                    this->_internal_ip());
+                                    this->_internal_address());
   }
 
-  // string port = 2;
-  if (!this->_internal_port().empty()) {
-    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                    this->_internal_port());
+  // uint64 file_size = 2;
+  if (this->_internal_file_size() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+        this->_internal_file_size());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::google::protobuf::Message::ClassData LocationReply::_class_data_ = {
-    LocationReply::MergeImpl,
+const ::google::protobuf::Message::ClassData MetaDataReply::_class_data_ = {
+    MetaDataReply::MergeImpl,
     nullptr,  // OnDemandRegisterArenaDtor
 };
-const ::google::protobuf::Message::ClassData* LocationReply::GetClassData() const {
+const ::google::protobuf::Message::ClassData* MetaDataReply::GetClassData() const {
   return &_class_data_;
 }
 
-void LocationReply::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
-  auto* const _this = static_cast<LocationReply*>(&to_msg);
-  auto& from = static_cast<const LocationReply&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:sfcas_dfs.LocationReply)
+void MetaDataReply::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
+  auto* const _this = static_cast<MetaDataReply*>(&to_msg);
+  auto& from = static_cast<const MetaDataReply&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:sfcas_dfs.MetaDataReply)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_ip().empty()) {
-    _this->_internal_set_ip(from._internal_ip());
+  if (!from._internal_address().empty()) {
+    _this->_internal_set_address(from._internal_address());
   }
-  if (!from._internal_port().empty()) {
-    _this->_internal_set_port(from._internal_port());
+  if (from._internal_file_size() != 0) {
+    _this->_internal_set_file_size(from._internal_file_size());
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void LocationReply::CopyFrom(const LocationReply& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:sfcas_dfs.LocationReply)
+void MetaDataReply::CopyFrom(const MetaDataReply& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sfcas_dfs.MetaDataReply)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-PROTOBUF_NOINLINE bool LocationReply::IsInitialized() const {
+PROTOBUF_NOINLINE bool MetaDataReply::IsInitialized() const {
   return true;
 }
 
-::_pbi::CachedSize* LocationReply::AccessCachedSize() const {
+::_pbi::CachedSize* MetaDataReply::AccessCachedSize() const {
   return &_impl_._cached_size_;
 }
-void LocationReply::InternalSwap(LocationReply* PROTOBUF_RESTRICT other) {
+void MetaDataReply::InternalSwap(MetaDataReply* PROTOBUF_RESTRICT other) {
   using std::swap;
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.ip_, &other->_impl_.ip_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.port_, &other->_impl_.port_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.address_, &other->_impl_.address_, arena);
+        swap(_impl_.file_size_, other->_impl_.file_size_);
 }
 
-::google::protobuf::Metadata LocationReply::GetMetadata() const {
+::google::protobuf::Metadata MetaDataReply::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_sfcas_2eproto_getter, &descriptor_table_sfcas_2eproto_once,
       file_level_metadata_sfcas_2eproto[1]);
+}
+// ===================================================================
+
+class StartUpMsg::_Internal {
+ public:
+  using HasBits = decltype(std::declval<StartUpMsg>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(StartUpMsg, _impl_._has_bits_);
+  static void set_has_filename(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_file_size(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
+
+StartUpMsg::StartUpMsg(::google::protobuf::Arena* arena)
+    : ::google::protobuf::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:sfcas_dfs.StartUpMsg)
+}
+inline PROTOBUF_NDEBUG_INLINE StartUpMsg::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        address_(arena, from.address_),
+        filename_(arena, from.filename_) {}
+
+StartUpMsg::StartUpMsg(
+    ::google::protobuf::Arena* arena,
+    const StartUpMsg& from)
+    : ::google::protobuf::Message(arena) {
+  StartUpMsg* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_);
+  _impl_.file_size_ = from._impl_.file_size_;
+
+  // @@protoc_insertion_point(copy_constructor:sfcas_dfs.StartUpMsg)
+}
+inline PROTOBUF_NDEBUG_INLINE StartUpMsg::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : _cached_size_{0},
+        address_(arena),
+        filename_(arena) {}
+
+inline void StartUpMsg::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.file_size_ = {};
+}
+StartUpMsg::~StartUpMsg() {
+  // @@protoc_insertion_point(destructor:sfcas_dfs.StartUpMsg)
+  _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  SharedDtor();
+}
+inline void StartUpMsg::SharedDtor() {
+  ABSL_DCHECK(GetArena() == nullptr);
+  _impl_.address_.Destroy();
+  _impl_.filename_.Destroy();
+  _impl_.~Impl_();
+}
+
+PROTOBUF_NOINLINE void StartUpMsg::Clear() {
+// @@protoc_insertion_point(message_clear_start:sfcas_dfs.StartUpMsg)
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.address_.ClearToEmpty();
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    _impl_.filename_.ClearNonDefaultToEmpty();
+  }
+  _impl_.file_size_ = ::uint64_t{0u};
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+const char* StartUpMsg::_InternalParse(
+    const char* ptr, ::_pbi::ParseContext* ctx) {
+  ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
+  return ptr;
+}
+
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 0, 44, 2> StartUpMsg::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(StartUpMsg, _impl_._has_bits_),
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    &_StartUpMsg_default_instance_._instance,
+    ::_pbi::TcParser::GenericFallback,  // fallback
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // string address = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(StartUpMsg, _impl_.address_)}},
+    // optional string filename = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 0, 0, PROTOBUF_FIELD_OFFSET(StartUpMsg, _impl_.filename_)}},
+    // optional uint64 file_size = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(StartUpMsg, _impl_.file_size_), 1>(),
+     {24, 1, 0, PROTOBUF_FIELD_OFFSET(StartUpMsg, _impl_.file_size_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string address = 1;
+    {PROTOBUF_FIELD_OFFSET(StartUpMsg, _impl_.address_), -1, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // optional string filename = 2;
+    {PROTOBUF_FIELD_OFFSET(StartUpMsg, _impl_.filename_), _Internal::kHasBitsOffset + 0, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // optional uint64 file_size = 3;
+    {PROTOBUF_FIELD_OFFSET(StartUpMsg, _impl_.file_size_), _Internal::kHasBitsOffset + 1, 0,
+    (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
+  }},
+  // no aux_entries
+  {{
+    "\24\7\10\0\0\0\0\0"
+    "sfcas_dfs.StartUpMsg"
+    "address"
+    "filename"
+  }},
+};
+
+::uint8_t* StartUpMsg::_InternalSerialize(
+    ::uint8_t* target,
+    ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sfcas_dfs.StartUpMsg)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  // string address = 1;
+  if (!this->_internal_address().empty()) {
+    const std::string& _s = this->_internal_address();
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sfcas_dfs.StartUpMsg.address");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // optional string filename = 2;
+  if (cached_has_bits & 0x00000001u) {
+    const std::string& _s = this->_internal_filename();
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sfcas_dfs.StartUpMsg.filename");
+    target = stream->WriteStringMaybeAliased(2, _s, target);
+  }
+
+  // optional uint64 file_size = 3;
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+        3, this->_internal_file_size(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sfcas_dfs.StartUpMsg)
+  return target;
+}
+
+::size_t StartUpMsg::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sfcas_dfs.StartUpMsg)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string address = 1;
+  if (!this->_internal_address().empty()) {
+    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                    this->_internal_address());
+  }
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    // optional string filename = 2;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                      this->_internal_filename());
+    }
+
+    // optional uint64 file_size = 3;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+          this->_internal_file_size());
+    }
+
+  }
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::google::protobuf::Message::ClassData StartUpMsg::_class_data_ = {
+    StartUpMsg::MergeImpl,
+    nullptr,  // OnDemandRegisterArenaDtor
+};
+const ::google::protobuf::Message::ClassData* StartUpMsg::GetClassData() const {
+  return &_class_data_;
+}
+
+void StartUpMsg::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
+  auto* const _this = static_cast<StartUpMsg*>(&to_msg);
+  auto& from = static_cast<const StartUpMsg&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:sfcas_dfs.StartUpMsg)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_address().empty()) {
+    _this->_internal_set_address(from._internal_address());
+  }
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_set_filename(from._internal_filename());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_impl_.file_size_ = from._impl_.file_size_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void StartUpMsg::CopyFrom(const StartUpMsg& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sfcas_dfs.StartUpMsg)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+PROTOBUF_NOINLINE bool StartUpMsg::IsInitialized() const {
+  return true;
+}
+
+::_pbi::CachedSize* StartUpMsg::AccessCachedSize() const {
+  return &_impl_._cached_size_;
+}
+void StartUpMsg::InternalSwap(StartUpMsg* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.address_, &other->_impl_.address_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.filename_, &other->_impl_.filename_, arena);
+        swap(_impl_.file_size_, other->_impl_.file_size_);
+}
+
+::google::protobuf::Metadata StartUpMsg::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_sfcas_2eproto_getter, &descriptor_table_sfcas_2eproto_once,
+      file_level_metadata_sfcas_2eproto[2]);
 }
 // ===================================================================
 
@@ -885,7 +1202,7 @@ void DataRequest::InternalSwap(DataRequest* PROTOBUF_RESTRICT other) {
 ::google::protobuf::Metadata DataRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_sfcas_2eproto_getter, &descriptor_table_sfcas_2eproto_once,
-      file_level_metadata_sfcas_2eproto[2]);
+      file_level_metadata_sfcas_2eproto[3]);
 }
 // ===================================================================
 
@@ -1070,7 +1387,7 @@ void DataReply::InternalSwap(DataReply* PROTOBUF_RESTRICT other) {
 ::google::protobuf::Metadata DataReply::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_sfcas_2eproto_getter, &descriptor_table_sfcas_2eproto_once,
-      file_level_metadata_sfcas_2eproto[3]);
+      file_level_metadata_sfcas_2eproto[4]);
 }
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace sfcas_dfs

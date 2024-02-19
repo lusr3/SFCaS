@@ -22,7 +22,9 @@
 namespace sfcas_dfs {
 
 static const char* FileAccess_method_names[] = {
-  "/sfcas_dfs.FileAccess/get_file_location",
+  "/sfcas_dfs.FileAccess/connect_to_master",
+  "/sfcas_dfs.FileAccess/upload_metadata",
+  "/sfcas_dfs.FileAccess/get_file_metadata",
   "/sfcas_dfs.FileAccess/get_data",
 };
 
@@ -33,29 +35,70 @@ std::unique_ptr< FileAccess::Stub> FileAccess::NewStub(const std::shared_ptr< ::
 }
 
 FileAccess::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
-  : channel_(channel), rpcmethod_get_file_location_(FileAccess_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_get_data_(FileAccess_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  : channel_(channel), rpcmethod_connect_to_master_(FileAccess_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_upload_metadata_(FileAccess_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::CLIENT_STREAMING, channel)
+  , rpcmethod_get_file_metadata_(FileAccess_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_get_data_(FileAccess_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
-::grpc::Status FileAccess::Stub::get_file_location(::grpc::ClientContext* context, const ::sfcas_dfs::LocationRequest& request, ::sfcas_dfs::LocationReply* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::sfcas_dfs::LocationRequest, ::sfcas_dfs::LocationReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_get_file_location_, context, request, response);
+::grpc::Status FileAccess::Stub::connect_to_master(::grpc::ClientContext* context, const ::sfcas_dfs::StartUpMsg& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sfcas_dfs::StartUpMsg, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_connect_to_master_, context, request, response);
 }
 
-void FileAccess::Stub::async::get_file_location(::grpc::ClientContext* context, const ::sfcas_dfs::LocationRequest* request, ::sfcas_dfs::LocationReply* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::sfcas_dfs::LocationRequest, ::sfcas_dfs::LocationReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_get_file_location_, context, request, response, std::move(f));
+void FileAccess::Stub::async::connect_to_master(::grpc::ClientContext* context, const ::sfcas_dfs::StartUpMsg* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sfcas_dfs::StartUpMsg, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_connect_to_master_, context, request, response, std::move(f));
 }
 
-void FileAccess::Stub::async::get_file_location(::grpc::ClientContext* context, const ::sfcas_dfs::LocationRequest* request, ::sfcas_dfs::LocationReply* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_get_file_location_, context, request, response, reactor);
+void FileAccess::Stub::async::connect_to_master(::grpc::ClientContext* context, const ::sfcas_dfs::StartUpMsg* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_connect_to_master_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::sfcas_dfs::LocationReply>* FileAccess::Stub::PrepareAsyncget_file_locationRaw(::grpc::ClientContext* context, const ::sfcas_dfs::LocationRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sfcas_dfs::LocationReply, ::sfcas_dfs::LocationRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_get_file_location_, context, request);
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* FileAccess::Stub::PrepareAsyncconnect_to_masterRaw(::grpc::ClientContext* context, const ::sfcas_dfs::StartUpMsg& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::sfcas_dfs::StartUpMsg, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_connect_to_master_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::sfcas_dfs::LocationReply>* FileAccess::Stub::Asyncget_file_locationRaw(::grpc::ClientContext* context, const ::sfcas_dfs::LocationRequest& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* FileAccess::Stub::Asyncconnect_to_masterRaw(::grpc::ClientContext* context, const ::sfcas_dfs::StartUpMsg& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncget_file_locationRaw(context, request, cq);
+    this->PrepareAsyncconnect_to_masterRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::ClientWriter< ::sfcas_dfs::StartUpMsg>* FileAccess::Stub::upload_metadataRaw(::grpc::ClientContext* context, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::ClientWriterFactory< ::sfcas_dfs::StartUpMsg>::Create(channel_.get(), rpcmethod_upload_metadata_, context, response);
+}
+
+void FileAccess::Stub::async::upload_metadata(::grpc::ClientContext* context, ::google::protobuf::Empty* response, ::grpc::ClientWriteReactor< ::sfcas_dfs::StartUpMsg>* reactor) {
+  ::grpc::internal::ClientCallbackWriterFactory< ::sfcas_dfs::StartUpMsg>::Create(stub_->channel_.get(), stub_->rpcmethod_upload_metadata_, context, response, reactor);
+}
+
+::grpc::ClientAsyncWriter< ::sfcas_dfs::StartUpMsg>* FileAccess::Stub::Asyncupload_metadataRaw(::grpc::ClientContext* context, ::google::protobuf::Empty* response, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncWriterFactory< ::sfcas_dfs::StartUpMsg>::Create(channel_.get(), cq, rpcmethod_upload_metadata_, context, response, true, tag);
+}
+
+::grpc::ClientAsyncWriter< ::sfcas_dfs::StartUpMsg>* FileAccess::Stub::PrepareAsyncupload_metadataRaw(::grpc::ClientContext* context, ::google::protobuf::Empty* response, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncWriterFactory< ::sfcas_dfs::StartUpMsg>::Create(channel_.get(), cq, rpcmethod_upload_metadata_, context, response, false, nullptr);
+}
+
+::grpc::Status FileAccess::Stub::get_file_metadata(::grpc::ClientContext* context, const ::sfcas_dfs::MetaDataRequest& request, ::sfcas_dfs::MetaDataReply* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sfcas_dfs::MetaDataRequest, ::sfcas_dfs::MetaDataReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_get_file_metadata_, context, request, response);
+}
+
+void FileAccess::Stub::async::get_file_metadata(::grpc::ClientContext* context, const ::sfcas_dfs::MetaDataRequest* request, ::sfcas_dfs::MetaDataReply* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sfcas_dfs::MetaDataRequest, ::sfcas_dfs::MetaDataReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_get_file_metadata_, context, request, response, std::move(f));
+}
+
+void FileAccess::Stub::async::get_file_metadata(::grpc::ClientContext* context, const ::sfcas_dfs::MetaDataRequest* request, ::sfcas_dfs::MetaDataReply* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_get_file_metadata_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sfcas_dfs::MetaDataReply>* FileAccess::Stub::PrepareAsyncget_file_metadataRaw(::grpc::ClientContext* context, const ::sfcas_dfs::MetaDataRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sfcas_dfs::MetaDataReply, ::sfcas_dfs::MetaDataRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_get_file_metadata_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sfcas_dfs::MetaDataReply>* FileAccess::Stub::Asyncget_file_metadataRaw(::grpc::ClientContext* context, const ::sfcas_dfs::MetaDataRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncget_file_metadataRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -80,15 +123,35 @@ FileAccess::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       FileAccess_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< FileAccess::Service, ::sfcas_dfs::LocationRequest, ::sfcas_dfs::LocationReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< FileAccess::Service, ::sfcas_dfs::StartUpMsg, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](FileAccess::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::sfcas_dfs::LocationRequest* req,
-             ::sfcas_dfs::LocationReply* resp) {
-               return service->get_file_location(ctx, req, resp);
+             const ::sfcas_dfs::StartUpMsg* req,
+             ::google::protobuf::Empty* resp) {
+               return service->connect_to_master(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       FileAccess_method_names[1],
+      ::grpc::internal::RpcMethod::CLIENT_STREAMING,
+      new ::grpc::internal::ClientStreamingHandler< FileAccess::Service, ::sfcas_dfs::StartUpMsg, ::google::protobuf::Empty>(
+          [](FileAccess::Service* service,
+             ::grpc::ServerContext* ctx,
+             ::grpc::ServerReader<::sfcas_dfs::StartUpMsg>* reader,
+             ::google::protobuf::Empty* resp) {
+               return service->upload_metadata(ctx, reader, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      FileAccess_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< FileAccess::Service, ::sfcas_dfs::MetaDataRequest, ::sfcas_dfs::MetaDataReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](FileAccess::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sfcas_dfs::MetaDataRequest* req,
+             ::sfcas_dfs::MetaDataReply* resp) {
+               return service->get_file_metadata(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      FileAccess_method_names[3],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< FileAccess::Service, ::sfcas_dfs::DataRequest, ::sfcas_dfs::DataReply>(
           [](FileAccess::Service* service,
@@ -102,7 +165,21 @@ FileAccess::Service::Service() {
 FileAccess::Service::~Service() {
 }
 
-::grpc::Status FileAccess::Service::get_file_location(::grpc::ServerContext* context, const ::sfcas_dfs::LocationRequest* request, ::sfcas_dfs::LocationReply* response) {
+::grpc::Status FileAccess::Service::connect_to_master(::grpc::ServerContext* context, const ::sfcas_dfs::StartUpMsg* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status FileAccess::Service::upload_metadata(::grpc::ServerContext* context, ::grpc::ServerReader< ::sfcas_dfs::StartUpMsg>* reader, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) reader;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status FileAccess::Service::get_file_metadata(::grpc::ServerContext* context, const ::sfcas_dfs::MetaDataRequest* request, ::sfcas_dfs::MetaDataReply* response) {
   (void) context;
   (void) request;
   (void) response;

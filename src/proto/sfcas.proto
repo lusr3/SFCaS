@@ -1,14 +1,22 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 package sfcas_dfs;
 
-message LocationRequest {
+message MetaDataRequest {
     string filename = 1;
 }
 
-message LocationReply {
-    string ip = 1;
-    string port = 2;
+message MetaDataReply {
+    string address = 1;
+    uint64 file_size = 2;
+}
+
+message StartUpMsg {
+    string address = 1;
+    optional string filename = 2;
+    optional uint64 file_size = 3;
 }
 
 message DataRequest {
@@ -17,14 +25,17 @@ message DataRequest {
     uint64 size = 3;
 }
 
-// 可能需要 stream 类型？
 message DataReply {
     bytes chunk = 1;
 }
 
 service FileAccess {
-    rpc get_file_location(LocationRequest) returns (LocationReply) {}
+    // 存储机与 master
+    rpc connect_to_master(StartUpMsg) returns (google.protobuf.Empty) {}
+    rpc upload_metadata(stream StartUpMsg) returns (google.protobuf.Empty) {}
 
+    // client 获取存储机位置和数据
+    rpc get_file_metadata(MetaDataRequest) returns (MetaDataReply) {}
     rpc get_data(DataRequest) returns (stream DataReply) {}
 }
 

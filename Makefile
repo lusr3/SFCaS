@@ -1,11 +1,19 @@
-OP_DIR := ./testDir
-MOUNT_DIR := ./mountDir
+CUR_DIR := $(shell pwd)
+OP_DIR := $(CUR_DIR)/testDir
+MOUNT_DIR := $(CUR_DIR)/mountDir
+CLIENT_DIR := $(CUR_DIR)/clientDir
+CLIENT_MOUNT_DIR := $(CUR_DIR)/clientMountDir
 BIN_DIR := ./bin
-BUDILL_DIR := ./build
+BUILDL_DIR := ./build
+PROTO_DIR := ./src/proto
 
 .PHONY: build run stop test combine create dcreate clean clear
 build:
-	@cd $(BUDILL_DIR) && cmake .. && make && cd ..
+	@cd $(BUILDL_DIR) && cmake .. && make && cd ..
+
+proto:$(PROTO_DIR)/sfcas.proto
+	@protoc --grpc_out $(PROTO_DIR) --cpp_out $(PROTO_DIR) \
+	-I $(PROTO_DIR) --plugin=protoc-gen-grpc=`which grpc_cpp_plugin` $(PROTO_DIR)/sfcas.proto
 
 # main program
 run:$(BIN_DIR)/sfcas
@@ -13,6 +21,16 @@ run:$(BIN_DIR)/sfcas
 
 stop:
 	umount $(MOUNT_DIR)
+
+# dfs
+master:$(BIN_DIR)/master
+	$^
+
+dataserver:$(BIN_DIR)/dataserver
+	$^
+
+client:$(BIN_DIR)/client
+	$^ -f -o modules=subdir,subdir=$(CLIENT_DIR) $(CLIENT_MOUNT_DIR)
 
 test:$(BIN_DIR)/readFile
 	$^
@@ -39,13 +57,13 @@ else
 	rm -r $(BIN_DIR)/*
 endif
 endif
-ifndef BUDILL_DIR
-	@echo "Directory for BUDILL_DIR is not defined."
+ifndef BUILDL_DIR
+	@echo "Directory for BUILDL_DIR is not defined."
 else
-ifeq ($(strip $(BUDILL_DIR)), "")
-	@echo "Directory for BUDILL_DIR is defined but empty."
+ifeq ($(strip $(BUILDL_DIR)), "")
+	@echo "Directory for BUILDL_DIR is defined but empty."
 else
-	rm -r $(BUDILL_DIR)/*
+	rm -r $(BUILDL_DIR)/*
 endif
 endif
 

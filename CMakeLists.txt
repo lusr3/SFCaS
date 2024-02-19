@@ -36,6 +36,8 @@ set(FUSE_LIBS_DIR "/usr/local/lib/x86_64-linux-gnu")
 # 操作目录
 set(OP_DIR "${CMAKE_SOURCE_DIR}/testDir")
 set(MOUNT_DIR "${CMAKE_SOURCE_DIR}/mountDir")
+set(CLIENT_DIR "${CMAKE_SOURCE_DIR}/clientDir")
+set(CLIENT_MOUNT_DIR "${CMAKE_SOURCE_DIR}/clientMountDir")
 message(STATUS "Actual directory: ${OP_DIR}")
 message(STATUS "Mount directory ${MOUNT_DIR}")
 
@@ -45,6 +47,8 @@ file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/libs")
 file(MAKE_DIRECTORY "${OP_DIR}")
 file(MAKE_DIRECTORY "${MOUNT_DIR}")
+file(MAKE_DIRECTORY "${CLIENT_DIR}")
+file(MAKE_DIRECTORY "${CLIENT_MOUNT_DIR}")
 
 # build
 include_directories("${CMAKE_SOURCE_DIR}/include")
@@ -80,13 +84,12 @@ set(sfcas_grpc_hdrs "${CMAKE_SOURCE_DIR}/src/proto/sfcas.grpc.pb.h")
 add_custom_command(
     OUTPUT "${sfcas_proto_srcs}" "${sfcas_proto_hdrs}" "${sfcas_grpc_srcs}" "${sfcas_grpc_hdrs}"
     COMMAND ${_PROTOBUF_PROTOC}
-    ARGS --grpc_out "."
-        --cpp_out "."
+    ARGS --grpc_out "${sfcas_proto_path}"
+        --cpp_out "${sfcas_proto_path}"
         -I "${sfcas_proto_path}"
         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
         "${sfcas_proto}"
-    DEPENDS "${sfcas_proto}"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/proto")
+    DEPENDS "${sfcas_proto}")
 
 add_library(sfcas_grpc_proto
     ${sfcas_grpc_srcs}
@@ -97,3 +100,19 @@ target_link_libraries(sfcas_grpc_proto
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
+  
+# master dataserver client
+add_executable(master "${CMAKE_SOURCE_DIR}/src/dfs/master.cc")
+target_include_directories(master PRIVATE "${CMAKE_SOURCE_DIR}/src/proto")
+target_link_libraries(master sfcas_grpc_proto)
+
+add_executable(dataserver 
+  "${CMAKE_SOURCE_DIR}/src/dfs/dataserver.cc"
+  "${CMAKE_SOURCE_DIR}/src/aux/needle.cpp")
+target_include_directories(dataserver PRIVATE "${CMAKE_SOURCE_DIR}/src/proto")
+target_link_libraries(dataserver sfcas_grpc_proto)
+
+add_executable(client "${CMAKE_SOURCE_DIR}/src/dfs/client.cc")
+target_include_directories(client PRIVATE "${CMAKE_SOURCE_DIR}/src/proto" "${FUSE_INCLUDE_DIR}")
+target_link_directories(client PRIVATE ${FUSE_LIBS_DIR})
+target_link_libraries(client PRIVATE fuse3 sfcas_grpc_proto)

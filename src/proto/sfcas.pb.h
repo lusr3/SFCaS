@@ -34,6 +34,7 @@
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/unknown_field_set.h"
+#include "google/protobuf/empty.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.
@@ -62,12 +63,15 @@ extern DataReplyDefaultTypeInternal _DataReply_default_instance_;
 class DataRequest;
 struct DataRequestDefaultTypeInternal;
 extern DataRequestDefaultTypeInternal _DataRequest_default_instance_;
-class LocationReply;
-struct LocationReplyDefaultTypeInternal;
-extern LocationReplyDefaultTypeInternal _LocationReply_default_instance_;
-class LocationRequest;
-struct LocationRequestDefaultTypeInternal;
-extern LocationRequestDefaultTypeInternal _LocationRequest_default_instance_;
+class MetaDataReply;
+struct MetaDataReplyDefaultTypeInternal;
+extern MetaDataReplyDefaultTypeInternal _MetaDataReply_default_instance_;
+class MetaDataRequest;
+struct MetaDataRequestDefaultTypeInternal;
+extern MetaDataRequestDefaultTypeInternal _MetaDataRequest_default_instance_;
+class StartUpMsg;
+struct StartUpMsgDefaultTypeInternal;
+extern StartUpMsgDefaultTypeInternal _StartUpMsg_default_instance_;
 }  // namespace sfcas_dfs
 namespace google {
 namespace protobuf {
@@ -81,26 +85,26 @@ namespace sfcas_dfs {
 
 // -------------------------------------------------------------------
 
-class LocationRequest final :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:sfcas_dfs.LocationRequest) */ {
+class StartUpMsg final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:sfcas_dfs.StartUpMsg) */ {
  public:
-  inline LocationRequest() : LocationRequest(nullptr) {}
-  ~LocationRequest() override;
+  inline StartUpMsg() : StartUpMsg(nullptr) {}
+  ~StartUpMsg() override;
   template<typename = void>
-  explicit PROTOBUF_CONSTEXPR LocationRequest(::google::protobuf::internal::ConstantInitialized);
+  explicit PROTOBUF_CONSTEXPR StartUpMsg(::google::protobuf::internal::ConstantInitialized);
 
-  inline LocationRequest(const LocationRequest& from)
-      : LocationRequest(nullptr, from) {}
-  LocationRequest(LocationRequest&& from) noexcept
-    : LocationRequest() {
+  inline StartUpMsg(const StartUpMsg& from)
+      : StartUpMsg(nullptr, from) {}
+  StartUpMsg(StartUpMsg&& from) noexcept
+    : StartUpMsg() {
     *this = ::std::move(from);
   }
 
-  inline LocationRequest& operator=(const LocationRequest& from) {
+  inline StartUpMsg& operator=(const StartUpMsg& from) {
     CopyFrom(from);
     return *this;
   }
-  inline LocationRequest& operator=(LocationRequest&& from) noexcept {
+  inline StartUpMsg& operator=(StartUpMsg&& from) noexcept {
     if (this == &from) return *this;
     if (GetArena() == from.GetArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -132,20 +136,20 @@ class LocationRequest final :
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const LocationRequest& default_instance() {
+  static const StartUpMsg& default_instance() {
     return *internal_default_instance();
   }
-  static inline const LocationRequest* internal_default_instance() {
-    return reinterpret_cast<const LocationRequest*>(
-               &_LocationRequest_default_instance_);
+  static inline const StartUpMsg* internal_default_instance() {
+    return reinterpret_cast<const StartUpMsg*>(
+               &_StartUpMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    0;
+    2;
 
-  friend void swap(LocationRequest& a, LocationRequest& b) {
+  friend void swap(StartUpMsg& a, StartUpMsg& b) {
     a.Swap(&b);
   }
-  inline void Swap(LocationRequest* other) {
+  inline void Swap(StartUpMsg* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetArena() != nullptr &&
@@ -158,7 +162,7 @@ class LocationRequest final :
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(LocationRequest* other) {
+  void UnsafeArenaSwap(StartUpMsg* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -166,14 +170,14 @@ class LocationRequest final :
 
   // implements Message ----------------------------------------------
 
-  LocationRequest* New(::google::protobuf::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<LocationRequest>(arena);
+  StartUpMsg* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<StartUpMsg>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const LocationRequest& from);
+  void CopyFrom(const StartUpMsg& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom( const LocationRequest& from) {
-    LocationRequest::MergeImpl(*this, from);
+  void MergeFrom( const StartUpMsg& from) {
+    StartUpMsg::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
@@ -191,16 +195,230 @@ class LocationRequest final :
   ::google::protobuf::internal::CachedSize* AccessCachedSize() const final;
   void SharedCtor(::google::protobuf::Arena* arena);
   void SharedDtor();
-  void InternalSwap(LocationRequest* other);
+  void InternalSwap(StartUpMsg* other);
 
   private:
   friend class ::google::protobuf::internal::AnyMetadata;
   static ::absl::string_view FullMessageName() {
-    return "sfcas_dfs.LocationRequest";
+    return "sfcas_dfs.StartUpMsg";
   }
   protected:
-  explicit LocationRequest(::google::protobuf::Arena* arena);
-  LocationRequest(::google::protobuf::Arena* arena, const LocationRequest& from);
+  explicit StartUpMsg(::google::protobuf::Arena* arena);
+  StartUpMsg(::google::protobuf::Arena* arena, const StartUpMsg& from);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAddressFieldNumber = 1,
+    kFilenameFieldNumber = 2,
+    kFileSizeFieldNumber = 3,
+  };
+  // string address = 1;
+  void clear_address() ;
+  const std::string& address() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_address(Arg_&& arg, Args_... args);
+  std::string* mutable_address();
+  PROTOBUF_NODISCARD std::string* release_address();
+  void set_allocated_address(std::string* value);
+
+  private:
+  const std::string& _internal_address() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_address(
+      const std::string& value);
+  std::string* _internal_mutable_address();
+
+  public:
+  // optional string filename = 2;
+  bool has_filename() const;
+  void clear_filename() ;
+  const std::string& filename() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_filename(Arg_&& arg, Args_... args);
+  std::string* mutable_filename();
+  PROTOBUF_NODISCARD std::string* release_filename();
+  void set_allocated_filename(std::string* value);
+
+  private:
+  const std::string& _internal_filename() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_filename(
+      const std::string& value);
+  std::string* _internal_mutable_filename();
+
+  public:
+  // optional uint64 file_size = 3;
+  bool has_file_size() const;
+  void clear_file_size() ;
+  ::uint64_t file_size() const;
+  void set_file_size(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_file_size() const;
+  void _internal_set_file_size(::uint64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:sfcas_dfs.StartUpMsg)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 3, 0,
+      44, 2>
+      _table_;
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+
+        inline explicit constexpr Impl_(
+            ::google::protobuf::internal::ConstantInitialized) noexcept;
+        inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                              ::google::protobuf::Arena* arena);
+        inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                              ::google::protobuf::Arena* arena, const Impl_& from);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr address_;
+    ::google::protobuf::internal::ArenaStringPtr filename_;
+    ::uint64_t file_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_sfcas_2eproto;
+};// -------------------------------------------------------------------
+
+class MetaDataRequest final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:sfcas_dfs.MetaDataRequest) */ {
+ public:
+  inline MetaDataRequest() : MetaDataRequest(nullptr) {}
+  ~MetaDataRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR MetaDataRequest(::google::protobuf::internal::ConstantInitialized);
+
+  inline MetaDataRequest(const MetaDataRequest& from)
+      : MetaDataRequest(nullptr, from) {}
+  MetaDataRequest(MetaDataRequest&& from) noexcept
+    : MetaDataRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline MetaDataRequest& operator=(const MetaDataRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline MetaDataRequest& operator=(MetaDataRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetArena() == from.GetArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const MetaDataRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const MetaDataRequest* internal_default_instance() {
+    return reinterpret_cast<const MetaDataRequest*>(
+               &_MetaDataRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    0;
+
+  friend void swap(MetaDataRequest& a, MetaDataRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(MetaDataRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetArena() != nullptr &&
+        GetArena() == other->GetArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetArena() == other->GetArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(MetaDataRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  MetaDataRequest* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<MetaDataRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const MetaDataRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const MetaDataRequest& from) {
+    MetaDataRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  ::google::protobuf::internal::CachedSize* AccessCachedSize() const final;
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void InternalSwap(MetaDataRequest* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "sfcas_dfs.MetaDataRequest";
+  }
+  protected:
+  explicit MetaDataRequest(::google::protobuf::Arena* arena);
+  MetaDataRequest(::google::protobuf::Arena* arena, const MetaDataRequest& from);
   public:
 
   static const ClassData _class_data_;
@@ -231,7 +449,7 @@ class LocationRequest final :
   std::string* _internal_mutable_filename();
 
   public:
-  // @@protoc_insertion_point(class_scope:sfcas_dfs.LocationRequest)
+  // @@protoc_insertion_point(class_scope:sfcas_dfs.MetaDataRequest)
  private:
   class _Internal;
 
@@ -262,26 +480,26 @@ class LocationRequest final :
   friend struct ::TableStruct_sfcas_2eproto;
 };// -------------------------------------------------------------------
 
-class LocationReply final :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:sfcas_dfs.LocationReply) */ {
+class MetaDataReply final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:sfcas_dfs.MetaDataReply) */ {
  public:
-  inline LocationReply() : LocationReply(nullptr) {}
-  ~LocationReply() override;
+  inline MetaDataReply() : MetaDataReply(nullptr) {}
+  ~MetaDataReply() override;
   template<typename = void>
-  explicit PROTOBUF_CONSTEXPR LocationReply(::google::protobuf::internal::ConstantInitialized);
+  explicit PROTOBUF_CONSTEXPR MetaDataReply(::google::protobuf::internal::ConstantInitialized);
 
-  inline LocationReply(const LocationReply& from)
-      : LocationReply(nullptr, from) {}
-  LocationReply(LocationReply&& from) noexcept
-    : LocationReply() {
+  inline MetaDataReply(const MetaDataReply& from)
+      : MetaDataReply(nullptr, from) {}
+  MetaDataReply(MetaDataReply&& from) noexcept
+    : MetaDataReply() {
     *this = ::std::move(from);
   }
 
-  inline LocationReply& operator=(const LocationReply& from) {
+  inline MetaDataReply& operator=(const MetaDataReply& from) {
     CopyFrom(from);
     return *this;
   }
-  inline LocationReply& operator=(LocationReply&& from) noexcept {
+  inline MetaDataReply& operator=(MetaDataReply&& from) noexcept {
     if (this == &from) return *this;
     if (GetArena() == from.GetArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -313,20 +531,20 @@ class LocationReply final :
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const LocationReply& default_instance() {
+  static const MetaDataReply& default_instance() {
     return *internal_default_instance();
   }
-  static inline const LocationReply* internal_default_instance() {
-    return reinterpret_cast<const LocationReply*>(
-               &_LocationReply_default_instance_);
+  static inline const MetaDataReply* internal_default_instance() {
+    return reinterpret_cast<const MetaDataReply*>(
+               &_MetaDataReply_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  friend void swap(LocationReply& a, LocationReply& b) {
+  friend void swap(MetaDataReply& a, MetaDataReply& b) {
     a.Swap(&b);
   }
-  inline void Swap(LocationReply* other) {
+  inline void Swap(MetaDataReply* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetArena() != nullptr &&
@@ -339,7 +557,7 @@ class LocationReply final :
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(LocationReply* other) {
+  void UnsafeArenaSwap(MetaDataReply* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -347,14 +565,14 @@ class LocationReply final :
 
   // implements Message ----------------------------------------------
 
-  LocationReply* New(::google::protobuf::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<LocationReply>(arena);
+  MetaDataReply* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<MetaDataReply>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const LocationReply& from);
+  void CopyFrom(const MetaDataReply& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom( const LocationReply& from) {
-    LocationReply::MergeImpl(*this, from);
+  void MergeFrom( const MetaDataReply& from) {
+    MetaDataReply::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
@@ -372,16 +590,16 @@ class LocationReply final :
   ::google::protobuf::internal::CachedSize* AccessCachedSize() const final;
   void SharedCtor(::google::protobuf::Arena* arena);
   void SharedDtor();
-  void InternalSwap(LocationReply* other);
+  void InternalSwap(MetaDataReply* other);
 
   private:
   friend class ::google::protobuf::internal::AnyMetadata;
   static ::absl::string_view FullMessageName() {
-    return "sfcas_dfs.LocationReply";
+    return "sfcas_dfs.MetaDataReply";
   }
   protected:
-  explicit LocationReply(::google::protobuf::Arena* arena);
-  LocationReply(::google::protobuf::Arena* arena, const LocationReply& from);
+  explicit MetaDataReply(::google::protobuf::Arena* arena);
+  MetaDataReply(::google::protobuf::Arena* arena, const MetaDataReply& from);
   public:
 
   static const ClassData _class_data_;
@@ -394,49 +612,43 @@ class LocationReply final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIpFieldNumber = 1,
-    kPortFieldNumber = 2,
+    kAddressFieldNumber = 1,
+    kFileSizeFieldNumber = 2,
   };
-  // string ip = 1;
-  void clear_ip() ;
-  const std::string& ip() const;
+  // string address = 1;
+  void clear_address() ;
+  const std::string& address() const;
   template <typename Arg_ = const std::string&, typename... Args_>
-  void set_ip(Arg_&& arg, Args_... args);
-  std::string* mutable_ip();
-  PROTOBUF_NODISCARD std::string* release_ip();
-  void set_allocated_ip(std::string* value);
+  void set_address(Arg_&& arg, Args_... args);
+  std::string* mutable_address();
+  PROTOBUF_NODISCARD std::string* release_address();
+  void set_allocated_address(std::string* value);
 
   private:
-  const std::string& _internal_ip() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_ip(
+  const std::string& _internal_address() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_address(
       const std::string& value);
-  std::string* _internal_mutable_ip();
+  std::string* _internal_mutable_address();
 
   public:
-  // string port = 2;
-  void clear_port() ;
-  const std::string& port() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_port(Arg_&& arg, Args_... args);
-  std::string* mutable_port();
-  PROTOBUF_NODISCARD std::string* release_port();
-  void set_allocated_port(std::string* value);
+  // uint64 file_size = 2;
+  void clear_file_size() ;
+  ::uint64_t file_size() const;
+  void set_file_size(::uint64_t value);
 
   private:
-  const std::string& _internal_port() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_port(
-      const std::string& value);
-  std::string* _internal_mutable_port();
+  ::uint64_t _internal_file_size() const;
+  void _internal_set_file_size(::uint64_t value);
 
   public:
-  // @@protoc_insertion_point(class_scope:sfcas_dfs.LocationReply)
+  // @@protoc_insertion_point(class_scope:sfcas_dfs.MetaDataReply)
  private:
   class _Internal;
 
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       1, 2, 0,
-      38, 2>
+      39, 2>
       _table_;
   friend class ::google::protobuf::MessageLite;
   friend class ::google::protobuf::Arena;
@@ -452,8 +664,8 @@ class LocationReply final :
                               ::google::protobuf::Arena* arena);
         inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                               ::google::protobuf::Arena* arena, const Impl_& from);
-    ::google::protobuf::internal::ArenaStringPtr ip_;
-    ::google::protobuf::internal::ArenaStringPtr port_;
+    ::google::protobuf::internal::ArenaStringPtr address_;
+    ::uint64_t file_size_;
     mutable ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -520,7 +732,7 @@ class DataRequest final :
                &_DataRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(DataRequest& a, DataRequest& b) {
     a.Swap(&b);
@@ -725,7 +937,7 @@ class DataReply final :
                &_DataReply_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(DataReply& a, DataReply& b) {
     a.Swap(&b);
@@ -861,51 +1073,51 @@ class DataReply final :
 #endif  // __GNUC__
 // -------------------------------------------------------------------
 
-// LocationRequest
+// MetaDataRequest
 
 // string filename = 1;
-inline void LocationRequest::clear_filename() {
+inline void MetaDataRequest::clear_filename() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   _impl_.filename_.ClearToEmpty();
 }
-inline const std::string& LocationRequest::filename() const
+inline const std::string& MetaDataRequest::filename() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:sfcas_dfs.LocationRequest.filename)
+  // @@protoc_insertion_point(field_get:sfcas_dfs.MetaDataRequest.filename)
   return _internal_filename();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void LocationRequest::set_filename(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void MetaDataRequest::set_filename(Arg_&& arg,
                                                      Args_... args) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
   _impl_.filename_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:sfcas_dfs.LocationRequest.filename)
+  // @@protoc_insertion_point(field_set:sfcas_dfs.MetaDataRequest.filename)
 }
-inline std::string* LocationRequest::mutable_filename() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline std::string* MetaDataRequest::mutable_filename() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   std::string* _s = _internal_mutable_filename();
-  // @@protoc_insertion_point(field_mutable:sfcas_dfs.LocationRequest.filename)
+  // @@protoc_insertion_point(field_mutable:sfcas_dfs.MetaDataRequest.filename)
   return _s;
 }
-inline const std::string& LocationRequest::_internal_filename() const {
+inline const std::string& MetaDataRequest::_internal_filename() const {
   PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
   return _impl_.filename_.Get();
 }
-inline void LocationRequest::_internal_set_filename(const std::string& value) {
+inline void MetaDataRequest::_internal_set_filename(const std::string& value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
   _impl_.filename_.Set(value, GetArena());
 }
-inline std::string* LocationRequest::_internal_mutable_filename() {
+inline std::string* MetaDataRequest::_internal_mutable_filename() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
   return _impl_.filename_.Mutable( GetArena());
 }
-inline std::string* LocationRequest::release_filename() {
+inline std::string* MetaDataRequest::release_filename() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  // @@protoc_insertion_point(field_release:sfcas_dfs.LocationRequest.filename)
+  // @@protoc_insertion_point(field_release:sfcas_dfs.MetaDataRequest.filename)
   return _impl_.filename_.Release();
 }
-inline void LocationRequest::set_allocated_filename(std::string* value) {
+inline void MetaDataRequest::set_allocated_filename(std::string* value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   _impl_.filename_.SetAllocated(value, GetArena());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -913,117 +1125,243 @@ inline void LocationRequest::set_allocated_filename(std::string* value) {
           _impl_.filename_.Set("", GetArena());
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:sfcas_dfs.LocationRequest.filename)
+  // @@protoc_insertion_point(field_set_allocated:sfcas_dfs.MetaDataRequest.filename)
 }
 
 // -------------------------------------------------------------------
 
-// LocationReply
+// MetaDataReply
 
-// string ip = 1;
-inline void LocationReply::clear_ip() {
+// string address = 1;
+inline void MetaDataReply::clear_address() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.ip_.ClearToEmpty();
+  _impl_.address_.ClearToEmpty();
 }
-inline const std::string& LocationReply::ip() const
+inline const std::string& MetaDataReply::address() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:sfcas_dfs.LocationReply.ip)
-  return _internal_ip();
+  // @@protoc_insertion_point(field_get:sfcas_dfs.MetaDataReply.address)
+  return _internal_address();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void LocationReply::set_ip(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void MetaDataReply::set_address(Arg_&& arg,
                                                      Args_... args) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
-  _impl_.ip_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:sfcas_dfs.LocationReply.ip)
+  _impl_.address_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:sfcas_dfs.MetaDataReply.address)
 }
-inline std::string* LocationReply::mutable_ip() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_ip();
-  // @@protoc_insertion_point(field_mutable:sfcas_dfs.LocationReply.ip)
+inline std::string* MetaDataReply::mutable_address() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_address();
+  // @@protoc_insertion_point(field_mutable:sfcas_dfs.MetaDataReply.address)
   return _s;
 }
-inline const std::string& LocationReply::_internal_ip() const {
+inline const std::string& MetaDataReply::_internal_address() const {
   PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
-  return _impl_.ip_.Get();
+  return _impl_.address_.Get();
 }
-inline void LocationReply::_internal_set_ip(const std::string& value) {
+inline void MetaDataReply::_internal_set_address(const std::string& value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
-  _impl_.ip_.Set(value, GetArena());
+  _impl_.address_.Set(value, GetArena());
 }
-inline std::string* LocationReply::_internal_mutable_ip() {
+inline std::string* MetaDataReply::_internal_mutable_address() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
-  return _impl_.ip_.Mutable( GetArena());
+  return _impl_.address_.Mutable( GetArena());
 }
-inline std::string* LocationReply::release_ip() {
+inline std::string* MetaDataReply::release_address() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  // @@protoc_insertion_point(field_release:sfcas_dfs.LocationReply.ip)
-  return _impl_.ip_.Release();
+  // @@protoc_insertion_point(field_release:sfcas_dfs.MetaDataReply.address)
+  return _impl_.address_.Release();
 }
-inline void LocationReply::set_allocated_ip(std::string* value) {
+inline void MetaDataReply::set_allocated_address(std::string* value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.ip_.SetAllocated(value, GetArena());
+  _impl_.address_.SetAllocated(value, GetArena());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.ip_.IsDefault()) {
-          _impl_.ip_.Set("", GetArena());
+        if (_impl_.address_.IsDefault()) {
+          _impl_.address_.Set("", GetArena());
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:sfcas_dfs.LocationReply.ip)
+  // @@protoc_insertion_point(field_set_allocated:sfcas_dfs.MetaDataReply.address)
 }
 
-// string port = 2;
-inline void LocationReply::clear_port() {
+// uint64 file_size = 2;
+inline void MetaDataReply::clear_file_size() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.port_.ClearToEmpty();
+  _impl_.file_size_ = ::uint64_t{0u};
 }
-inline const std::string& LocationReply::port() const
+inline ::uint64_t MetaDataReply::file_size() const {
+  // @@protoc_insertion_point(field_get:sfcas_dfs.MetaDataReply.file_size)
+  return _internal_file_size();
+}
+inline void MetaDataReply::set_file_size(::uint64_t value) {
+  _internal_set_file_size(value);
+  // @@protoc_insertion_point(field_set:sfcas_dfs.MetaDataReply.file_size)
+}
+inline ::uint64_t MetaDataReply::_internal_file_size() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.file_size_;
+}
+inline void MetaDataReply::_internal_set_file_size(::uint64_t value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.file_size_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// StartUpMsg
+
+// string address = 1;
+inline void StartUpMsg::clear_address() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.address_.ClearToEmpty();
+}
+inline const std::string& StartUpMsg::address() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:sfcas_dfs.LocationReply.port)
-  return _internal_port();
+  // @@protoc_insertion_point(field_get:sfcas_dfs.StartUpMsg.address)
+  return _internal_address();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void LocationReply::set_port(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void StartUpMsg::set_address(Arg_&& arg,
                                                      Args_... args) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
-  _impl_.port_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:sfcas_dfs.LocationReply.port)
+  _impl_.address_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:sfcas_dfs.StartUpMsg.address)
 }
-inline std::string* LocationReply::mutable_port() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_port();
-  // @@protoc_insertion_point(field_mutable:sfcas_dfs.LocationReply.port)
+inline std::string* StartUpMsg::mutable_address() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_address();
+  // @@protoc_insertion_point(field_mutable:sfcas_dfs.StartUpMsg.address)
   return _s;
 }
-inline const std::string& LocationReply::_internal_port() const {
+inline const std::string& StartUpMsg::_internal_address() const {
   PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
-  return _impl_.port_.Get();
+  return _impl_.address_.Get();
 }
-inline void LocationReply::_internal_set_port(const std::string& value) {
+inline void StartUpMsg::_internal_set_address(const std::string& value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
-  _impl_.port_.Set(value, GetArena());
+  _impl_.address_.Set(value, GetArena());
 }
-inline std::string* LocationReply::_internal_mutable_port() {
+inline std::string* StartUpMsg::_internal_mutable_address() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
-  return _impl_.port_.Mutable( GetArena());
+  return _impl_.address_.Mutable( GetArena());
 }
-inline std::string* LocationReply::release_port() {
+inline std::string* StartUpMsg::release_address() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  // @@protoc_insertion_point(field_release:sfcas_dfs.LocationReply.port)
-  return _impl_.port_.Release();
+  // @@protoc_insertion_point(field_release:sfcas_dfs.StartUpMsg.address)
+  return _impl_.address_.Release();
 }
-inline void LocationReply::set_allocated_port(std::string* value) {
+inline void StartUpMsg::set_allocated_address(std::string* value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.port_.SetAllocated(value, GetArena());
+  _impl_.address_.SetAllocated(value, GetArena());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.port_.IsDefault()) {
-          _impl_.port_.Set("", GetArena());
+        if (_impl_.address_.IsDefault()) {
+          _impl_.address_.Set("", GetArena());
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:sfcas_dfs.LocationReply.port)
+  // @@protoc_insertion_point(field_set_allocated:sfcas_dfs.StartUpMsg.address)
+}
+
+// optional string filename = 2;
+inline bool StartUpMsg::has_filename() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void StartUpMsg::clear_filename() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.filename_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& StartUpMsg::filename() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:sfcas_dfs.StartUpMsg.filename)
+  return _internal_filename();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void StartUpMsg::set_filename(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.filename_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:sfcas_dfs.StartUpMsg.filename)
+}
+inline std::string* StartUpMsg::mutable_filename() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_filename();
+  // @@protoc_insertion_point(field_mutable:sfcas_dfs.StartUpMsg.filename)
+  return _s;
+}
+inline const std::string& StartUpMsg::_internal_filename() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.filename_.Get();
+}
+inline void StartUpMsg::_internal_set_filename(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.filename_.Set(value, GetArena());
+}
+inline std::string* StartUpMsg::_internal_mutable_filename() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.filename_.Mutable( GetArena());
+}
+inline std::string* StartUpMsg::release_filename() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:sfcas_dfs.StartUpMsg.filename)
+  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* released = _impl_.filename_.Release();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.filename_.Set("", GetArena());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return released;
+}
+inline void StartUpMsg::set_allocated_filename(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.filename_.SetAllocated(value, GetArena());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.filename_.IsDefault()) {
+          _impl_.filename_.Set("", GetArena());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:sfcas_dfs.StartUpMsg.filename)
+}
+
+// optional uint64 file_size = 3;
+inline bool StartUpMsg::has_file_size() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline void StartUpMsg::clear_file_size() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.file_size_ = ::uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline ::uint64_t StartUpMsg::file_size() const {
+  // @@protoc_insertion_point(field_get:sfcas_dfs.StartUpMsg.file_size)
+  return _internal_file_size();
+}
+inline void StartUpMsg::set_file_size(::uint64_t value) {
+  _internal_set_file_size(value);
+  // @@protoc_insertion_point(field_set:sfcas_dfs.StartUpMsg.file_size)
+}
+inline ::uint64_t StartUpMsg::_internal_file_size() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.file_size_;
+}
+inline void StartUpMsg::_internal_set_file_size(::uint64_t value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.file_size_ = value;
 }
 
 // -------------------------------------------------------------------
