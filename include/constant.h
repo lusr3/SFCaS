@@ -6,6 +6,8 @@
 #define MOUNTDIR "mountDir"
 #define OPDIR "testDir"
 #define BACKDIR "back"
+#define MODELDIR "models"
+#define MODELNAME "model"
 #define FILEPREFIX "small"
 #define FILESUFFIX ".txt"
 #define INDEXFILE "index"

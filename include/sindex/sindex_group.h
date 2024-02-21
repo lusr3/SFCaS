@@ -22,7 +22,10 @@ class Group {
             uint32_t array_size, struct needle_index *needle_begin,
             uint64_t start);
 
-  result_t get(const key_t &key, val_t &val);
+  result_t get(const key_t &key, val_t &val) const;
+
+  void save_group_model(FILE *model_file) const;
+  void read_group_model(FILE *model_file, struct needle_index *needle_begin, uint64_t start);
 
  private:
   // train model
@@ -32,11 +35,8 @@ class Group {
   void free_data();
 
   // get operation
-  bool get_from_array(const key_t &key, val_t &val);
-
-  size_t get_pos_from_array(const key_t &key);
   size_t binary_search_key(const key_t &key, size_t pos_hint,
-                                  size_t search_begin, size_t search_end);
+                                  size_t search_begin, size_t search_end) const;
 
   void get_model_error(int64_t &error_pos,
                               int64_t &error_neg) const;
@@ -50,7 +50,7 @@ class Group {
   key_t pivot;
   record_t *data = nullptr;         // 8B
 
-  double *model_weights;
+  double *model_weights;  
   struct needle_index *needle_begin;
   uint64_t start;
 
@@ -58,8 +58,8 @@ class Group {
   int64_t max_neg_error;
   int64_t max_pos_error;
   uint32_t array_size;              // 4B
-  uint8_t prefix_len = 0;           // 1B
-  uint8_t feature_len = 0;          // 1B
+  uint32_t prefix_len = 0;           // 4B
+  uint32_t feature_len = 0;          // 4B
 };
 
 }  // namespace sindex

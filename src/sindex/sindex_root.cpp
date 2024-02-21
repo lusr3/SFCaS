@@ -118,6 +118,7 @@ inline void Root<key_t, val_t>::train_piecewise_model() {
     models[m_i].weights.resize(f_len + 1, 0);
     models[m_i].p_len = p_len;
     models[m_i].f_len = f_len;
+    models[m_i].pivot_num = m_size;
     model_prepare(m_key_ptrs, ps, models[m_i].weights.data(), f_len);
 
     // 计算误差
@@ -435,6 +436,74 @@ inline key_t &Root<key_t, val_t>::get_group_pivot(size_t group_i) const {
   return groups[group_i].first;
 }
 
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::save_model() const {
+  char save_path[1024];
+  sprintf(save_path, "%s/%s/%s", PATH2PDIR, MODELDIR, MODELNAME);
+  FILE *model_file = fopen(save_path, "wb");
+  if(model_file == nullptr) {
+    print_error("Can't open model file %s to save!\n", save_path);
+    return;
+  }
+
+  // 保存模型总共分组数和 root 处的模型个数
+  fwrite(&group_n, sizeof(group_n), 1, model_file);
+  fwrite(&root_model_n, sizeof(root_model_n), 1, model_file);
+
+  for(size_t model_group_start = 0, root_model_i = 0; root_model_i < root_model_n; ++root_model_i) {
+    uint64_t pivot_num_i = models[root_model_i].pivot_num;
+    fwrite(&(models[root_model_i].p_len), sizeof(models[root_model_i].p_len), 1, model_file);
+    fwrite(&(models[root_model_i].f_len), sizeof(models[root_model_i].f_len), 1, model_file);
+    fwrite(&pivot_num_i, sizeof(pivot_num_i), 1, model_file);
+    fwrite(models[root_model_i].weights.data(), sizeof(double), models[root_model_i].f_len + 1, model_file);
+    
+    // 写入 root 模型中的所有 group 模型
+    for(size_t group_i = model_group_start; group_i < model_group_start + pivot_num_i; ++group_i) {
+      group_t *group_i_ptr = get_group_ptr(group_i);
+      group_i_ptr->save_group_model(model_file);
+    }
+    model_group_start += pivot_num_i;
+  }
+
+  fclose(model_file);
+}
+
+template <class key_t, class val_t>
+inline void Root<key_t, val_t>::read_model(needle_index *needle_begin) {
+  char save_path[1024];
+  sprintf(save_path, "%s/%s/%s", PATH2PDIR, MODELDIR, MODELNAME);
+  FILE *model_file = fopen(save_path, "rb");
+  if(model_file == nullptr) {
+    print_error("Can't open model file %s to save!\n", save_path);
+    return;
+  }
+
+  fread(&group_n, sizeof(group_n), 1, model_file);
+  fread(&root_model_n, sizeof(root_model_n), 1, model_file);
+  groups = std::make_unique<std::pair<key_t, group_t *>[]>(group_n);
+
+  uint64_t index_cnt = 0;
+  for(size_t model_group_start = 0, root_model_i = 0; root_model_i < root_model_n; ++root_model_i) {
+    fread(&(models[root_model_i].p_len), sizeof(models[root_model_i].p_len), 1, model_file);
+    fread(&(models[root_model_i].f_len), sizeof(models[root_model_i].f_len), 1, model_file);
+    fread(&(models[root_model_i].pivot_num), sizeof(models[root_model_i].pivot_num), 1, model_file);
+    models[root_model_i].weights.resize(models[root_model_i].f_len + 1);
+    fread(models[root_model_i].weights.data(), sizeof(double), models[root_model_i].f_len + 1, model_file);
+    model_pivots[root_model_i] = needle_begin[index_cnt].filename;
+    
+    // 读入 root 模型中的所有 group 模型
+    for(size_t group_i = model_group_start; group_i < model_group_start + models[root_model_i].pivot_num; ++group_i) {
+      group_t *group_ptr = new group_t();
+      set_group_ptr(group_i, group_ptr);
+      set_group_pivot(group_i, needle_begin[index_cnt].filename);
+      group_ptr->read_group_model(model_file, needle_begin + index_cnt, index_cnt);
+      index_cnt += group_ptr->array_size;
+    }
+    model_group_start += models[root_model_i].pivot_num;
+  }
+
+  fclose(model_file);
+}
 
 template <class key_t, class val_t>
 inline double Root<key_t, val_t>::train_and_get_err(

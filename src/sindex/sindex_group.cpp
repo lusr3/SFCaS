@@ -3,7 +3,6 @@
 
 #include "sindex_group.h"
 #include "index.h"
-
 namespace sindex {
 template class Group<index_key_t, uint64_t>;
 
@@ -66,7 +65,7 @@ template <class key_t, class val_t>
 void Group<key_t, val_t>::init_feature_length() {
   const size_t key_size = sizeof(key_t);
   if (array_size < 2) {
-    prefix_len = (uint8_t)key_size;
+    prefix_len = (uint32_t)key_size;
     return;
   }
 
@@ -136,7 +135,7 @@ inline void Group<key_t, val_t>::prepare_last(
 
 template <class key_t, class val_t>
 inline result_t Group<key_t, val_t>::get(
-  const key_t &key, val_t &val) {
+  const key_t &key, val_t &val) const {
   int64_t pos_pred = predict(key);
   int64_t search_begin = pos_pred + max_neg_error,
   search_end = pos_pred + max_pos_error;
@@ -160,7 +159,7 @@ inline result_t Group<key_t, val_t>::get(
 // [search_begin, search_end]
 template <class key_t, class val_t>
 inline size_t Group<key_t, val_t>::binary_search_key(
-    const key_t &key, size_t pos, size_t search_begin, size_t search_end) {
+    const key_t &key, size_t pos, size_t search_begin, size_t search_end) const {
   assert(search_begin <= search_end);
   size_t mid = pos;
   while (search_end != search_begin) {
@@ -203,6 +202,30 @@ inline size_t Group<key_t, val_t>::predict(const key_t &key) const {
 template <class key_t, class val_t>
 inline size_t Group<key_t, val_t>::predict(const double *model_key) const {
   return model_predict(model_weights, model_key, feature_len);
+}
+
+template <class key_t, class val_t>
+inline void Group<key_t, val_t>::save_group_model(FILE *model_file) const {
+  fwrite(&array_size, sizeof(array_size), 1, model_file);
+  fwrite(&prefix_len, sizeof(prefix_len), 1, model_file);
+  fwrite(&feature_len, sizeof(feature_len), 1, model_file);
+  fwrite(&max_pos_error, sizeof(max_pos_error), 1, model_file);
+  fwrite(&max_neg_error, sizeof(max_neg_error), 1, model_file);
+  fwrite(model_weights, sizeof(double), feature_len + 1, model_file);
+}
+
+template <class key_t, class val_t>
+inline void Group<key_t, val_t>::read_group_model(FILE *model_file, needle_index *needle_begin, uint64_t start) {
+  this->pivot = needle_begin->filename;
+  this->needle_begin = needle_begin;
+  this->start = start;
+  fread(&array_size, sizeof(array_size), 1, model_file);
+  fread(&prefix_len, sizeof(prefix_len), 1, model_file);
+  fread(&feature_len, sizeof(feature_len), 1, model_file);
+  fread(&max_pos_error, sizeof(max_pos_error), 1, model_file);
+  fread(&max_neg_error, sizeof(max_neg_error), 1, model_file);
+  model_weights = new double[feature_len + 1];
+  fread(model_weights, sizeof(double), feature_len + 1, model_file);
 }
 
 }  // namespace sindex

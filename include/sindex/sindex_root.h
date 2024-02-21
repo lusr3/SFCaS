@@ -20,6 +20,7 @@ class Root {
   struct PartialModelMeta {
     uint32_t p_len;
     uint32_t f_len;
+    uint64_t pivot_num;
     // 加 1 是指偏置
     std::vector<double> weights;
   };
@@ -30,6 +31,9 @@ public:
     std::vector<struct needle_index> &indexs);
 
   result_t get(const key_t &key, val_t &val);
+
+  void save_model() const;
+  void read_model(needle_index *needle_begin);
 
 private:
   // train model
@@ -60,13 +64,13 @@ private:
   key_t &get_group_pivot(size_t group_i) const;
 
   std::unique_ptr<std::pair<key_t, group_t *>[]> groups;  // 8B
-  uint32_t group_n = 0;                                           // 4B
-  uint32_t root_model_n = 0;                                      // 4B
+  uint32_t group_n = 0;                                   // 4B
+  uint32_t root_model_n = 0;                              // 4B
   std::array<key_t, max_root_model_n> model_pivots;
   std::array<model_meta_t, max_root_model_n> models;
   // std::array<std::pair<int64_t, int64_t>, max_root_model_n> model_errors;
 };
 
 }  // namespace sindex
-
+  
 #endif  // SINDEX_ROOT_H

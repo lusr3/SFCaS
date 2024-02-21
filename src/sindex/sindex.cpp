@@ -19,6 +19,11 @@ SIndex<key_t, val_t>::SIndex(const std::vector<key_t> &keys, const std::vector<v
   // malloc memory for root & init root
   root = new root_t();
   root->init(keys, vals, indexs);
+  // root->save_model();
+  // COUT_THIS("Save models success!");
+  
+  // root->read_model(indexs.data());
+  // COUT_THIS("Read models success!");
 }
 
 template <class key_t, class val_t>

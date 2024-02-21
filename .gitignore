@@ -1,9 +1,10 @@
 back/
+build/
+libs/
 bin/
+models/
 testDir/
 mountDir/
-./
-../
 .git/
 *.gz
 .vscode/

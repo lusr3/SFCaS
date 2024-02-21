@@ -97,11 +97,13 @@ static int sfcas_read(const char *path, char *buf, size_t size, off_t offset,
 		    struct fuse_file_info *fi) {
 	const char *filename = strrchr(path, '/');
 
+	// 查找文件元数据
 	struct needle_index *cur_index = NULL;
 	if(index_list.is_cached && strcmp(filename + 1, index_list.cached_item->filename.get_name()) == 0) 
 		cur_index = index_list.cached_item;
 	else 
 		cur_index = find_index(&index_list, filename + 1, sindex_model);
+	// 读取数据
 	if(cur_index) {
 		int flag = fseek(index_list.data_file, cur_index->offset + offset, SEEK_SET);
 		if(flag) {
