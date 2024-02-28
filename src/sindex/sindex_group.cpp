@@ -141,11 +141,11 @@ inline result_t Group<key_t, val_t>::get(
   search_end = pos_pred + max_pos_error;
   // search within the range
   if(search_begin < 0) search_begin = 0;
-  if(search_begin > (int64_t)this->array_size) search_begin = this->array_size;
+  if(search_begin >= (int64_t)this->array_size) search_begin = this->array_size - 1;
   if(search_end < 0) search_end = 0;
-  if(search_end > (int64_t)this->array_size) search_end = this->array_size;
+  if(search_end >= (int64_t)this->array_size) search_end = this->array_size - 1;
   // 在预测出来的 pos 和误差范围内二分查找
-  size_t pos = binary_search_key(key, pos_pred, search_begin, search_end);
+  size_t pos = binary_search_key(key, pos_pred, search_begin, search_end)
   DEBUG_THIS("predict pos: " << pos);
   DEBUG_THIS("predict name: " << needle_begin[pos].filename);
   DEBUG_THIS("actual name: " << key);
@@ -161,9 +161,9 @@ template <class key_t, class val_t>
 inline size_t Group<key_t, val_t>::binary_search_key(
     const key_t &key, size_t pos, size_t search_begin, size_t search_end) const {
   assert(search_begin <= search_end);
-  size_t mid = pos;
+  if(search_begin == search_end) return search_begin;
+  size_t mid = (pos >= search_begin && pos <= search_end) ? pos : (search_begin + search_end) / 2;;
   while (search_end != search_begin) {
-    DEBUG_THIS("begin: " << search_begin << " end: " << search_end);
     if (needle_begin[mid].filename.less_than(key, prefix_len, feature_len)) {
       search_begin = mid + 1;
     } else {

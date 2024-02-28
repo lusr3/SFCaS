@@ -13,25 +13,25 @@ public:
 	//  constexpr 约束保证其定义的是在编译期可求得的值
 	static constexpr size_t model_key_size() { return len; }
 
-	static StrKey max() {
-		static StrKey max_key;
-		memset(max_key.buf, 255, len);
-		return max_key;
-	}
-	static StrKey min() {
-		static StrKey min_key;
-		memset(min_key.buf, 0, len);
-		return min_key;
-	}
+	// static StrKey max() {
+	// 	static StrKey max_key;
+	// 	memset(max_key.buf, 255, len);
+	// 	return max_key;
+	// }
+	// static StrKey min() {
+	// 	static StrKey min_key;
+	// 	memset(min_key.buf, 0, len);
+	// 	return min_key;
+	// }
 
 	// construct
-	StrKey() { memset(buf, 0, len); }
+	StrKey() { memset(buf, '\0', len); }
 	StrKey(const char *s) {
-		memset(buf, 0, len);
+		memset(buf, '\0', len);
 		memcpy(buf, s, strlen(s));
 	}
 	StrKey(const std::string &s) {
-		memset(buf, 0, len);
+		memset(buf, '\0', len);
 		memcpy(buf, s.data(), s.size());
 	}
 	StrKey(const StrKey &other) { memcpy(buf, other.buf, len); }
@@ -42,7 +42,10 @@ public:
 
 	// operation on key
 	void set_key(const char *s) {
-		memcpy(buf, s, strlen(s));
+		memset(buf, '\0', len);
+		size_t s_len = strlen(s);
+		memcpy(buf, s, s_len);
+		buf[s_len] = '\0';
 	}
 
 	char *get_name() {
