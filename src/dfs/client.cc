@@ -8,7 +8,7 @@
 
 #include "helper.h"
 #include "constant.h"
-#include "sfcas.grpc.pb.h"
+#include "file_access.grpc.pb.h"
 
 using grpc::Status;
 using grpc::StatusCode;
@@ -23,11 +23,11 @@ using std::unique_ptr;
 using std::cout;
 using std::endl;
 
-using sfcas_dfs::FileAccess;
-using sfcas_dfs::MetaDataRequest;
-using sfcas_dfs::MetaDataReply;
-using sfcas_dfs::DataRequest;
-using sfcas_dfs::DataReply;
+using sfcas::fileaccess::FileAccess;
+using sfcas::fileaccess::MetaDataRequest;
+using sfcas::fileaccess::MetaDataReply;
+using sfcas::fileaccess::DataRequest;
+using sfcas::fileaccess::DataReply;
 
 static const string MASTER_IP = "localhost";
 static const string MASTER_PORT = "50001";
@@ -108,6 +108,7 @@ public:
         Status status = reader->Finish();
         if(!status.ok()) {
             COUT_THIS(status.error_message());
+			return -1;
         }
 		return received_bytes;
     }
@@ -184,6 +185,11 @@ static int sfcas_read(const char *path, char *buf, size_t size, off_t offset,
 	);
 	
 	int read_size = data_client.get_data(filename + 1, offset, size, buf);
+	// nameserver 还未检测到 dataserver 的异常
+	if(read_size < 0) {
+		LOG_THIS("Something wrong with dataserver");
+		return -ENOENT;
+	}
 	return read_size;
 }
 

@@ -6,7 +6,8 @@
 #include "helper.h"
 #include "constant.h"
 #include "needle.h"
-#include "sfcas.grpc.pb.h"
+#include "file_access.grpc.pb.h"
+#include "health_check.grpc.pb.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -26,15 +27,28 @@ using std::unique_ptr;
 using std::cout;
 using std::endl;
 
-using sfcas_dfs::FileAccess;
-using sfcas_dfs::DataRequest;
-using sfcas_dfs::DataReply;
-using sfcas_dfs::StartUpMsg;
+using sfcas::fileaccess::FileAccess;
+using sfcas::fileaccess::DataRequest;
+using sfcas::fileaccess::DataReply;
+using sfcas::fileaccess::StartUpMsg;
+using sfcas::fileaccess::StartUpReply;
+using sfcas::healthcheck::HealthCheck;
+using sfcas::healthcheck::HealthCheckRequest;
+using sfcas::healthcheck::HealthCheckResponse;
 
 static const string IP = "localhost";
 static const string PORT = "50002";
 static const string MASTER_IP = "localhost";
 static const string MASTER_PORT = "50001";
+
+class HealthCheckServerImpl final : public HealthCheck::Service {
+    // 能连接就能服务
+    Status Check(ServerContext *context, const HealthCheckRequest *request,
+                HealthCheckResponse *reply) override {
+        reply->set_status(HealthCheckResponse::SERVING);
+        return Status::OK;
+    }
+};
 
 class FileAccessDataServerImpl final : public FileAccess::Service {
 public:
@@ -88,6 +102,21 @@ public:
     FileAccessDataServerClient(shared_ptr<Channel> channel)
         : stub_(FileAccess::NewStub(channel)) {}
     
+    StartUpReply::ConnectState connect_to_master() {
+        StartUpMsg msg;
+        msg.set_address(IP + ":" + PORT);
+        ClientContext context;
+        StartUpReply reply;
+
+        Status status = stub_->connect_to_master(&context, msg, &reply);
+        if(!status.ok()) {
+            std::cerr << status.error_code() << " " << status.error_message() << endl;
+            return StartUpReply::ERROR;
+        }
+
+        return reply.connect_state();
+    }
+
     void upload_metadata() {
         // client 准备
         StartUpMsg msg;
@@ -132,16 +161,18 @@ private:
 };
 
 void run_dataserver() {
-    FileAccessDataServerImpl service;
+    FileAccessDataServerImpl file_access_service;
+    HealthCheckServerImpl health_check_service;
 
     string address(IP + ":" + PORT);
     ServerBuilder builder;
 
     builder.AddListeningPort(address, grpc::InsecureServerCredentials());
-    builder.RegisterService(&service);
+    builder.RegisterService(&file_access_service);
+    builder.RegisterService(&health_check_service);
 
     unique_ptr<Server> server(builder.BuildAndStart());
-    cout << "Master listening on port: " << address << endl;
+    cout << "Dataserver listening on port: " << address << endl;
 
     server->Wait();
 }
@@ -151,7 +182,18 @@ void startup() {
     FileAccessDataServerClient data_server_client(
         grpc::CreateChannel(address, grpc::InsecureChannelCredentials())
     );
-    data_server_client.upload_metadata();
+    // 新连接需要上传
+    StartUpReply::StartUpReply::ConnectState connect_state = data_server_client.connect_to_master();
+    if(connect_state == StartUpReply::NEW) {
+        LOG_THIS("New connect");
+        data_server_client.upload_metadata();
+    }
+    else if(connect_state == StartUpReply::ERROR) {
+        LOG_THIS("Connection Refused!");
+        return;
+    }
+    // 重连无需上传
+    else LOG_THIS("Reconnect");
 
     run_dataserver();
 }

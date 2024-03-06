@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 
-package sfcas_dfs;
+package sfcas.fileaccess;
 
 message MetaDataRequest {
     string filename = 1;
@@ -19,6 +19,15 @@ message StartUpMsg {
     optional uint64 file_size = 3;
 }
 
+message StartUpReply {
+    enum ConnectState {
+        NEW = 0;
+        RECONNECT = 1;
+        ERROR = 2;
+    }
+    ConnectState connect_state = 1;
+}
+
 message DataRequest {
     string filename = 1;
     uint64 offset = 2;
@@ -31,7 +40,7 @@ message DataReply {
 
 service FileAccess {
     // 存储机与 master
-    rpc connect_to_master(StartUpMsg) returns (google.protobuf.Empty) {}
+    rpc connect_to_master(StartUpMsg) returns (StartUpReply) {}
     rpc upload_metadata(stream StartUpMsg) returns (google.protobuf.Empty) {}
 
     // client 获取存储机位置和数据

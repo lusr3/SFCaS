@@ -2,6 +2,7 @@ back/
 bin/
 build/
 libs/
+models/
 testDir/
 mountDir/
 clientMountDir/

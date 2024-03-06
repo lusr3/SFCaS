@@ -6,14 +6,17 @@ CLIENT_MOUNT_DIR := $(CUR_DIR)/clientMountDir
 BIN_DIR := ./bin
 BUILDL_DIR := ./build
 PROTO_DIR := ./src/proto
+GRPC_DIR := ./src/grpc
 
 .PHONY: build run stop test combine create dcreate clean clear
 build:
 	@cd $(BUILDL_DIR) && cmake .. && make && cd ..
 
-proto:$(PROTO_DIR)/sfcas.proto
-	@protoc --grpc_out $(PROTO_DIR) --cpp_out $(PROTO_DIR) \
-	-I $(PROTO_DIR) --plugin=protoc-gen-grpc=`which grpc_cpp_plugin` $(PROTO_DIR)/sfcas.proto
+proto:$(PROTO_DIR)/file_access.proto $(PROTO_DIR)/health_check.proto
+	@protoc --grpc_out $(GRPC_DIR) --cpp_out $(GRPC_DIR) \
+	-I $(PROTO_DIR) --plugin=protoc-gen-grpc=`which grpc_cpp_plugin` $(PROTO_DIR)/file_access.proto
+	@protoc --grpc_out $(GRPC_DIR) --cpp_out $(GRPC_DIR) \
+	-I $(PROTO_DIR) --plugin=protoc-gen-grpc=`which grpc_cpp_plugin` $(PROTO_DIR)/health_check.proto
 
 # main program
 run:$(BIN_DIR)/sfcas
@@ -23,7 +26,7 @@ stop:
 	umount $(MOUNT_DIR)
 
 # dfs
-master:$(BIN_DIR)/master
+nameserver:$(BIN_DIR)/nameserver
 	$^
 
 dataserver:$(BIN_DIR)/dataserver

@@ -73,46 +73,74 @@ add_executable(directCreateFile "${CMAKE_SOURCE_DIR}/test/directCreateFile.cpp" 
 
 # dfs
 # protobuf
-get_filename_component(sfcas_proto "${CMAKE_SOURCE_DIR}/src/proto/sfcas.proto" ABSOLUTE)
-get_filename_component(sfcas_proto_path "${sfcas_proto}" PATH)
+get_filename_component(file_access_proto "${CMAKE_SOURCE_DIR}/src/proto/file_access.proto" ABSOLUTE)
+get_filename_component(health_check_proto "${CMAKE_SOURCE_DIR}/src/proto/health_check.proto" ABSOLUTE)
+get_filename_component(proto_path "${file_access_proto}" PATH)
 
-# Generated sources
-set(sfcas_proto_srcs "${CMAKE_SOURCE_DIR}/src/proto/sfcas.pb.cc")
-set(sfcas_proto_hdrs "${CMAKE_SOURCE_DIR}/src/proto/sfcas.pb.h")
-set(sfcas_grpc_srcs "${CMAKE_SOURCE_DIR}/src/proto/sfcas.grpc.pb.cc")
-set(sfcas_grpc_hdrs "${CMAKE_SOURCE_DIR}/src/proto/sfcas.grpc.pb.h")
+# fileaccess service sources
+set(grpc_ouput_path "${CMAKE_SOURCE_DIR}/src/grpc")
+set(file_access_proto_srcs "${CMAKE_SOURCE_DIR}/src/grpc/file_access.pb.cc")
+set(file_access_grpc_hdrs "${CMAKE_SOURCE_DIR}/src/grpc/file_access.pb.h")
+set(file_access_grpc_srcs "${CMAKE_SOURCE_DIR}/src/grpc/file_access.grpc.pb.cc")
+set(file_access_grpc_hdrs "${CMAKE_SOURCE_DIR}/src/grpc/file_access.grpc.pb.h")
 add_custom_command(
-    OUTPUT "${sfcas_proto_srcs}" "${sfcas_proto_hdrs}" "${sfcas_grpc_srcs}" "${sfcas_grpc_hdrs}"
+    OUTPUT "${file_access_proto_srcs}" "${file_access_proto_hdrs}" "${file_access_grpc_srcs}" "${file_access_grpc_hdrs}"
     COMMAND ${_PROTOBUF_PROTOC}
-    ARGS --grpc_out "${sfcas_proto_path}"
-        --cpp_out "${sfcas_proto_path}"
-        -I "${sfcas_proto_path}"
+    ARGS --grpc_out "${grpc_ouput_path}"
+        --cpp_out "${grpc_ouput_path}"
+        -I "${proto_path}"
         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-        "${sfcas_proto}"
-    DEPENDS "${sfcas_proto}")
+        "${file_access_proto}"
+    DEPENDS "${file_access_proto}")
 
-add_library(sfcas_grpc_proto
-    ${sfcas_grpc_srcs}
-    ${sfcas_grpc_hdrs}
-    ${sfcas_proto_srcs}
-    ${sfcas_proto_hdrs})
-target_link_libraries(sfcas_grpc_proto
+# health check service sources
+set(grpc_ouput_path "${CMAKE_SOURCE_DIR}/src/grpc")
+set(health_check_proto_srcs "${CMAKE_SOURCE_DIR}/src/grpc/health_check.pb.cc")
+set(health_check_grpc_hdrs "${CMAKE_SOURCE_DIR}/src/grpc/health_check.pb.h")
+set(health_check_grpc_srcs "${CMAKE_SOURCE_DIR}/src/grpc/health_check.grpc.pb.cc")
+set(health_check_grpc_hdrs "${CMAKE_SOURCE_DIR}/src/grpc/health_check.grpc.pb.h")
+add_custom_command(
+    OUTPUT "${health_check_proto_srcs}" "${health_check_proto_hdrs}" "${health_check_grpc_srcs}" "${health_check_grpc_hdrs}"
+    COMMAND ${_PROTOBUF_PROTOC}
+    ARGS --grpc_out "${grpc_ouput_path}"
+        --cpp_out "${grpc_ouput_path}"
+        -I "${proto_path}"
+        --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+        "${health_check_proto}"
+    DEPENDS "${health_check_proto}")
+
+add_library(file_access_grpc_proto
+    ${file_access_grpc_srcs}
+    ${file_access_grpc_hdrs}
+    ${file_access_proto_srcs}
+    ${file_access_proto_hdrs})
+target_link_libraries(file_access_grpc_proto
+    ${_REFLECTION}
+    ${_GRPC_GRPCPP}
+    ${_PROTOBUF_LIBPROTOBUF})
+
+add_library(health_check_grpc_proto
+    ${health_check_grpc_srcs}
+    ${health_check_grpc_hdrs}
+    ${health_check_proto_srcs}
+    ${health_check_proto_hdrs})
+target_link_libraries(health_check_grpc_proto
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
   
-# master dataserver client
-add_executable(master "${CMAKE_SOURCE_DIR}/src/dfs/master.cc")
-target_include_directories(master PRIVATE "${CMAKE_SOURCE_DIR}/src/proto")
-target_link_libraries(master sfcas_grpc_proto)
+# nameserver dataserver client
+add_executable(nameserver "${CMAKE_SOURCE_DIR}/src/dfs/nameserver.cc")
+target_include_directories(nameserver PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc")
+target_link_libraries(nameserver file_access_grpc_proto health_check_grpc_proto)
 
 add_executable(dataserver 
   "${CMAKE_SOURCE_DIR}/src/dfs/dataserver.cc"
   "${CMAKE_SOURCE_DIR}/src/aux/needle.cpp")
-target_include_directories(dataserver PRIVATE "${CMAKE_SOURCE_DIR}/src/proto")
-target_link_libraries(dataserver sfcas_grpc_proto)
+target_include_directories(dataserver PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc")
+target_link_libraries(dataserver file_access_grpc_proto health_check_grpc_proto)
 
 add_executable(client "${CMAKE_SOURCE_DIR}/src/dfs/client.cc")
-target_include_directories(client PRIVATE "${CMAKE_SOURCE_DIR}/src/proto" "${FUSE_INCLUDE_DIR}")
+target_include_directories(client PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc" "${FUSE_INCLUDE_DIR}")
 target_link_directories(client PRIVATE ${FUSE_LIBS_DIR})
-target_link_libraries(client PRIVATE fuse3 sfcas_grpc_proto)
+target_link_libraries(client PRIVATE fuse3 file_access_grpc_proto)
