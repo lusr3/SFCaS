@@ -45,7 +45,7 @@ typedef std::chrono::time_point<Clock> Timestamp;
 
 static const string IP = "localhost";
 static const string PORT = "50001";
-static const std::chrono::seconds TIMEOUT(25);
+static const std::chrono::seconds TIMEOUT(60);
 static const std::chrono::seconds CHECK_BASE(8);
 static const std::chrono::seconds CHECK_INTERVAL(10);
 
@@ -74,7 +74,6 @@ public:
     void check(const string &server_address) {
         // 防止刚加入时的心跳检测误判
         if(!is_timeout(CHECK_BASE)) return;
-        // LOG_THIS("Check health");
 
         ClientContext ctx;
         HealthCheckRequest req;
@@ -171,18 +170,17 @@ public:
             reply->set_connect_state(StartUpReply::RECONNECT);
         }
         health_locker_.unlock();
+        LOG_THIS("dataserver in " << server_address << " connected");
         return Status::OK;
     }
 
     Status upload_metadata(ServerContext *context,
         ServerReader<StartUpMsg> *reader, Empty *response) override {
         StartUpMsg start_up_msg;
-        string server_address;
 
         // 防止多个 dataserver 同时启动上传导致的并发问题
         metadata_rwlocker_.lock();
         while(reader->Read(&start_up_msg)) {
-            if(server_address.empty()) server_address = start_up_msg.address();
             add_metadata(start_up_msg.filename(), start_up_msg.address(), start_up_msg.file_size());
         }
         metadata_rwlocker_.unlock();

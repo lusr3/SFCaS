@@ -13,7 +13,10 @@ void read_needle_index(struct needle_index *needle, FILE *index_file) {
     fread(&needle->flags, sizeof(needle->flags), 1, index_file);
     fread(&needle->offset, sizeof(needle->offset), 1, index_file);
     fread(&needle->size, sizeof(needle->size), 1, index_file);
-    fread(needle->filename.get_name(), 1, needle->neddle_size - NEEDLE_BASIC_SIZE, index_file);
+    // 必须有结尾的 '\0'
+    char *filename_ptr = needle->filename.get_name();
+    fread(filename_ptr, 1, needle->neddle_size - NEEDLE_BASIC_SIZE, index_file);
+    filename_ptr[needle->neddle_size - NEEDLE_BASIC_SIZE] = '\0';
 }
 
 void insert_needle_index(struct needle_index *needle, FILE *index_file) {
