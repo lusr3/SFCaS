@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package sfcas.fileaccess;
+
+message MetaDataRequest {
+    string filename = 1;
+}
+
+message MetaDataReply {
+    string address = 1;
+    uint64 file_size = 2;
+}
+
+message StartUpMsg {
+    string address = 1;
+    optional string filename = 2;
+    optional uint64 file_size = 3;
+}
+
+message StartUpReply {
+    enum ConnectState {
+        NEW = 0;
+        RECONNECT = 1;
+        ERROR = 2;
+    }
+    ConnectState connect_state = 1;
+}
+
+message DataRequest {
+    string filename = 1;
+    uint64 offset = 2;
+    uint64 size = 3;
+}
+
+message DataReply {
+    bytes chunk = 1;
+}
+
+service FileAccess {
+    // 存储机与 master
+    rpc connect_to_master(StartUpMsg) returns (StartUpReply) {}
+    rpc upload_metadata(stream StartUpMsg) returns (google.protobuf.Empty) {}
+
+    // client 获取存储机位置和数据
+    rpc get_file_metadata(MetaDataRequest) returns (MetaDataReply) {}
+    rpc get_data(DataRequest) returns (stream DataReply) {}
+}
+

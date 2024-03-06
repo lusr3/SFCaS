@@ -2,9 +2,12 @@ back/
 build/
 libs/
 bin/
+build/
+libs/
 models/
 testDir/
 mountDir/
-.git/
-*.gz
+clientMountDir/
+clientDir/
 .vscode/
+*.gz
