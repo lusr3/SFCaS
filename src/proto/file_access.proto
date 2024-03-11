@@ -14,16 +14,18 @@ message MetaDataReply {
 }
 
 message StartUpMsg {
-    string address = 1;
-    optional string filename = 2;
-    optional uint64 file_size = 3;
+    int32 gid = 1;
+    string address = 2;
+    string filename = 3;
+    uint64 file_size = 4;
 }
 
 message StartUpReply {
     enum ConnectState {
         NEW = 0;
         RECONNECT = 1;
-        ERROR = 2;
+        BACKUP = 2;
+        ERROR = 3;
     }
     ConnectState connect_state = 1;
 }

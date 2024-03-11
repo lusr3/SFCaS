@@ -1,36 +1,13 @@
 #define FUSE_USE_VERSION 31
 
 #include <fuse.h>
-#include <iostream>
-#include <string>
-
-#include <grpcpp/grpcpp.h>
 
 #include "helper.h"
 #include "constant.h"
-#include "file_access.grpc.pb.h"
+#include "util.h"
 
-using grpc::Status;
-using grpc::StatusCode;
-using grpc::ClientWriter;
-using grpc::ClientReader;
-using grpc::Channel;
-using grpc::ClientContext;
-
-using std::string;
-using std::shared_ptr;
-using std::unique_ptr;
-using std::cout;
-using std::endl;
-
-using sfcas::fileaccess::FileAccess;
-using sfcas::fileaccess::MetaDataRequest;
-using sfcas::fileaccess::MetaDataReply;
-using sfcas::fileaccess::DataRequest;
-using sfcas::fileaccess::DataReply;
-
-static const string MASTER_IP = "localhost";
-static const string MASTER_PORT = "50001";
+static string NAME_IP = "localhost";
+static string NAME_PORT = "50001";
 
 struct MetaData {
     string address;
@@ -209,11 +186,19 @@ static const struct fuse_operations myOper = {
 	.init		= sfcas_init
 };
 
+void read_ini() {
+    boost::property_tree::ptree pt;
+    boost::property_tree::ini_parser::read_ini("./config/nameserver.ini", pt);
+
+    NAME_IP = pt.get<string>("Address.IP");
+    NAME_PORT = pt.get<string>("Address.PORT");
+}
 
 int main(int argc, char *argv[])
 {	
+	read_ini();
 	metadata_client = new FileAccessMetaDataClient(
-		grpc::CreateChannel(MASTER_IP + ":" + MASTER_PORT,
+		grpc::CreateChannel(NAME_IP + ":" + NAME_PORT,
 		grpc::InsecureChannelCredentials())
 	);
 	int res = fuse_main(argc, argv, &myOper, NULL);

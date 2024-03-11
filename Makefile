@@ -10,6 +10,9 @@ GRPC_DIR := ./src/grpc
 
 .PHONY: build run stop test combine create dcreate clean clear
 build:
+	@if [ ! -d $(CUR_DIR)/build ]; then \
+		mkdir -p $(CUR_DIR)/build; \
+	fi
 	@cd $(BUILDL_DIR) && cmake .. && make && cd ..
 
 proto:$(PROTO_DIR)/file_access.proto $(PROTO_DIR)/health_check.proto

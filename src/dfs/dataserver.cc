@@ -1,45 +1,13 @@
-#include <iostream>
-#include <string>
-
-#include <grpcpp/grpcpp.h>
-
 #include "helper.h"
 #include "constant.h"
 #include "needle.h"
-#include "file_access.grpc.pb.h"
-#include "health_check.grpc.pb.h"
+#include "util.h"
 
-using grpc::Server;
-using grpc::ServerBuilder;
-using grpc::ServerContext;
-using grpc::Status;
-using grpc::StatusCode;
-using grpc::ServerWriter;
-using grpc::ClientWriter;
-using google::protobuf::Empty;
-
-using grpc::Channel;
-using grpc::ClientContext;
-
-using std::string;
-using std::shared_ptr;
-using std::unique_ptr;
-using std::cout;
-using std::endl;
-
-using sfcas::fileaccess::FileAccess;
-using sfcas::fileaccess::DataRequest;
-using sfcas::fileaccess::DataReply;
-using sfcas::fileaccess::StartUpMsg;
-using sfcas::fileaccess::StartUpReply;
-using sfcas::healthcheck::HealthCheck;
-using sfcas::healthcheck::HealthCheckRequest;
-using sfcas::healthcheck::HealthCheckResponse;
-
-static const string IP = "localhost";
-static const string PORT = "50002";
-static const string MASTER_IP = "localhost";
-static const string MASTER_PORT = "50001";
+static string IP = "localhost";
+static string PORT = "50002";
+static int GID = -1;
+static string NAME_IP = "localhost";
+static string NAME_PORT = "50001";
 
 class HealthCheckServerImpl final : public HealthCheck::Service {
     // 能连接就能服务
@@ -54,6 +22,7 @@ class FileAccessDataServerImpl final : public FileAccess::Service {
 public:
     Status get_data(ServerContext *context, const DataRequest *request,
                     ServerWriter<DataReply> *writer) override {
+        LOG_THIS(IP + ":" + PORT << " is serving");
         const string &filename = request->filename();
         uint64_t offset = request->offset(), size = request->size();
         char path2file[BUFFER_SIZE];
@@ -105,12 +74,13 @@ public:
     StartUpReply::ConnectState connect_to_master() {
         StartUpMsg msg;
         msg.set_address(IP + ":" + PORT);
+        msg.set_gid(GID);
         ClientContext context;
         StartUpReply reply;
 
         Status status = stub_->connect_to_master(&context, msg, &reply);
         if(!status.ok()) {
-            std::cerr << status.error_code() << " " << status.error_message() << endl;
+            LOG_THIS(status.error_code() << " " << status.error_message());
             return StartUpReply::ERROR;
         }
 
@@ -120,7 +90,7 @@ public:
     void upload_metadata() {
         // client 准备
         StartUpMsg msg;
-        msg.set_address(IP + ":" + PORT);
+        msg.set_gid(GID);
         ClientContext context;
         Empty empty_reply;
         unique_ptr<ClientWriter<StartUpMsg>> writer(
@@ -178,27 +148,47 @@ void run_dataserver() {
 }
 
 void startup() {
-    string address(MASTER_IP + ":" + MASTER_PORT);
+    string address(NAME_IP + ":" + NAME_PORT);
     FileAccessDataServerClient data_server_client(
         grpc::CreateChannel(address, grpc::InsecureChannelCredentials())
     );
-    // 新连接需要上传
+    // 新连接且无这个组别才需要上传
     StartUpReply::StartUpReply::ConnectState connect_state = data_server_client.connect_to_master();
     if(connect_state == StartUpReply::NEW) {
-        LOG_THIS("New connect");
+        LOG_THIS("New Connect!");
         data_server_client.upload_metadata();
     }
-    else if(connect_state == StartUpReply::ERROR) {
+    else if(connect_state == StartUpReply::BACKUP)
+        LOG_THIS("New Group Member!");
+    else if(connect_state == StartUpReply::RECONNECT)
+        LOG_THIS("Reconnect!");
+    else {
         LOG_THIS("Connection Refused!");
         return;
     }
-    // 重连无需上传
-    else LOG_THIS("Reconnect");
 
     run_dataserver();
 }
 
+void read_ini() {
+    // nameserver ini
+    boost::property_tree::ptree name_pt;
+    boost::property_tree::ini_parser::read_ini("./config/nameserver.ini", name_pt);
+
+    NAME_IP = name_pt.get<string>("Address.IP");
+    NAME_PORT = name_pt.get<string>("Address.PORT");
+
+    // dataserver ini
+    boost::property_tree::ptree data_pt;
+    boost::property_tree::ini_parser::read_ini("./config/dataserver.ini", data_pt);
+
+    IP = data_pt.get<string>("Address.IP");
+    PORT = data_pt.get<string>("Address.PORT");
+    GID = data_pt.get<int>("Group.GID");
+}
+
 int main() {
+    read_ini();
     startup();
     return 0;
 }

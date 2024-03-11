@@ -89,7 +89,8 @@ namespace fileaccess {
 enum StartUpReply_ConnectState : int {
   StartUpReply_ConnectState_NEW = 0,
   StartUpReply_ConnectState_RECONNECT = 1,
-  StartUpReply_ConnectState_ERROR = 2,
+  StartUpReply_ConnectState_BACKUP = 2,
+  StartUpReply_ConnectState_ERROR = 3,
   StartUpReply_ConnectState_StartUpReply_ConnectState_INT_MIN_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::min(),
   StartUpReply_ConnectState_StartUpReply_ConnectState_INT_MAX_SENTINEL_DO_NOT_USE_ =
@@ -99,8 +100,8 @@ enum StartUpReply_ConnectState : int {
 bool StartUpReply_ConnectState_IsValid(int value);
 extern const uint32_t StartUpReply_ConnectState_internal_data_[];
 constexpr StartUpReply_ConnectState StartUpReply_ConnectState_ConnectState_MIN = static_cast<StartUpReply_ConnectState>(0);
-constexpr StartUpReply_ConnectState StartUpReply_ConnectState_ConnectState_MAX = static_cast<StartUpReply_ConnectState>(2);
-constexpr int StartUpReply_ConnectState_ConnectState_ARRAYSIZE = 2 + 1;
+constexpr StartUpReply_ConnectState StartUpReply_ConnectState_ConnectState_MAX = static_cast<StartUpReply_ConnectState>(3);
+constexpr int StartUpReply_ConnectState_ConnectState_ARRAYSIZE = 3 + 1;
 const ::google::protobuf::EnumDescriptor*
 StartUpReply_ConnectState_descriptor();
 template <typename T>
@@ -113,7 +114,7 @@ const std::string& StartUpReply_ConnectState_Name(T value) {
 template <>
 inline const std::string& StartUpReply_ConnectState_Name(StartUpReply_ConnectState value) {
   return ::google::protobuf::internal::NameOfDenseEnum<StartUpReply_ConnectState_descriptor,
-                                                 0, 2>(
+                                                 0, 3>(
       static_cast<int>(value));
 }
 inline bool StartUpReply_ConnectState_Parse(absl::string_view name, StartUpReply_ConnectState* value) {
@@ -258,6 +259,7 @@ class StartUpReply final :
   using ConnectState = StartUpReply_ConnectState;
   static constexpr ConnectState NEW = StartUpReply_ConnectState_NEW;
   static constexpr ConnectState RECONNECT = StartUpReply_ConnectState_RECONNECT;
+  static constexpr ConnectState BACKUP = StartUpReply_ConnectState_BACKUP;
   static constexpr ConnectState ERROR = StartUpReply_ConnectState_ERROR;
   static inline bool ConnectState_IsValid(int value) {
     return StartUpReply_ConnectState_IsValid(value);
@@ -454,11 +456,12 @@ class StartUpMsg final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kAddressFieldNumber = 1,
-    kFilenameFieldNumber = 2,
-    kFileSizeFieldNumber = 3,
+    kAddressFieldNumber = 2,
+    kFilenameFieldNumber = 3,
+    kFileSizeFieldNumber = 4,
+    kGidFieldNumber = 1,
   };
-  // string address = 1;
+  // string address = 2;
   void clear_address() ;
   const std::string& address() const;
   template <typename Arg_ = const std::string&, typename... Args_>
@@ -474,8 +477,7 @@ class StartUpMsg final :
   std::string* _internal_mutable_address();
 
   public:
-  // optional string filename = 2;
-  bool has_filename() const;
+  // string filename = 3;
   void clear_filename() ;
   const std::string& filename() const;
   template <typename Arg_ = const std::string&, typename... Args_>
@@ -491,8 +493,7 @@ class StartUpMsg final :
   std::string* _internal_mutable_filename();
 
   public:
-  // optional uint64 file_size = 3;
-  bool has_file_size() const;
+  // uint64 file_size = 4;
   void clear_file_size() ;
   ::uint64_t file_size() const;
   void set_file_size(::uint64_t value);
@@ -502,13 +503,23 @@ class StartUpMsg final :
   void _internal_set_file_size(::uint64_t value);
 
   public:
+  // int32 gid = 1;
+  void clear_gid() ;
+  ::int32_t gid() const;
+  void set_gid(::int32_t value);
+
+  private:
+  ::int32_t _internal_gid() const;
+  void _internal_set_gid(::int32_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:sfcas.fileaccess.StartUpMsg)
  private:
   class _Internal;
 
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 3, 0,
+      2, 4, 0,
       51, 2>
       _table_;
   friend class ::google::protobuf::MessageLite;
@@ -525,11 +536,11 @@ class StartUpMsg final :
                               ::google::protobuf::Arena* arena);
         inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                               ::google::protobuf::Arena* arena, const Impl_& from);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    mutable ::google::protobuf::internal::CachedSize _cached_size_;
     ::google::protobuf::internal::ArenaStringPtr address_;
     ::google::protobuf::internal::ArenaStringPtr filename_;
     ::uint64_t file_size_;
+    ::int32_t gid_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -1449,7 +1460,30 @@ inline void MetaDataReply::_internal_set_file_size(::uint64_t value) {
 
 // StartUpMsg
 
-// string address = 1;
+// int32 gid = 1;
+inline void StartUpMsg::clear_gid() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.gid_ = 0;
+}
+inline ::int32_t StartUpMsg::gid() const {
+  // @@protoc_insertion_point(field_get:sfcas.fileaccess.StartUpMsg.gid)
+  return _internal_gid();
+}
+inline void StartUpMsg::set_gid(::int32_t value) {
+  _internal_set_gid(value);
+  // @@protoc_insertion_point(field_set:sfcas.fileaccess.StartUpMsg.gid)
+}
+inline ::int32_t StartUpMsg::_internal_gid() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.gid_;
+}
+inline void StartUpMsg::_internal_set_gid(::int32_t value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.gid_ = value;
+}
+
+// string address = 2;
 inline void StartUpMsg::clear_address() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   _impl_.address_.ClearToEmpty();
@@ -1502,15 +1536,10 @@ inline void StartUpMsg::set_allocated_address(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:sfcas.fileaccess.StartUpMsg.address)
 }
 
-// optional string filename = 2;
-inline bool StartUpMsg::has_filename() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  return value;
-}
+// string filename = 3;
 inline void StartUpMsg::clear_filename() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   _impl_.filename_.ClearToEmpty();
-  _impl_._has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& StartUpMsg::filename() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -1521,7 +1550,7 @@ template <typename Arg_, typename... Args_>
 inline PROTOBUF_ALWAYS_INLINE void StartUpMsg::set_filename(Arg_&& arg,
                                                      Args_... args) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_._has_bits_[0] |= 0x00000001u;
+  ;
   _impl_.filename_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:sfcas.fileaccess.StartUpMsg.filename)
 }
@@ -1536,34 +1565,21 @@ inline const std::string& StartUpMsg::_internal_filename() const {
 }
 inline void StartUpMsg::_internal_set_filename(const std::string& value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_._has_bits_[0] |= 0x00000001u;
+  ;
   _impl_.filename_.Set(value, GetArena());
 }
 inline std::string* StartUpMsg::_internal_mutable_filename() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_._has_bits_[0] |= 0x00000001u;
+  ;
   return _impl_.filename_.Mutable( GetArena());
 }
 inline std::string* StartUpMsg::release_filename() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   // @@protoc_insertion_point(field_release:sfcas.fileaccess.StartUpMsg.filename)
-  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
-    return nullptr;
-  }
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  auto* released = _impl_.filename_.Release();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.filename_.Set("", GetArena());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  return released;
+  return _impl_.filename_.Release();
 }
 inline void StartUpMsg::set_allocated_filename(std::string* value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  if (value != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
   _impl_.filename_.SetAllocated(value, GetArena());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         if (_impl_.filename_.IsDefault()) {
@@ -1573,15 +1589,10 @@ inline void StartUpMsg::set_allocated_filename(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:sfcas.fileaccess.StartUpMsg.filename)
 }
 
-// optional uint64 file_size = 3;
-inline bool StartUpMsg::has_file_size() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
-  return value;
-}
+// uint64 file_size = 4;
 inline void StartUpMsg::clear_file_size() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   _impl_.file_size_ = ::uint64_t{0u};
-  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 inline ::uint64_t StartUpMsg::file_size() const {
   // @@protoc_insertion_point(field_get:sfcas.fileaccess.StartUpMsg.file_size)
@@ -1597,7 +1608,7 @@ inline ::uint64_t StartUpMsg::_internal_file_size() const {
 }
 inline void StartUpMsg::_internal_set_file_size(::uint64_t value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_._has_bits_[0] |= 0x00000002u;
+  ;
   _impl_.file_size_ = value;
 }
 

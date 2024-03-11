@@ -131,16 +131,16 @@ target_link_libraries(health_check_grpc_proto
   
 # nameserver dataserver client
 add_executable(nameserver "${CMAKE_SOURCE_DIR}/src/dfs/nameserver.cc")
-target_include_directories(nameserver PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc")
+target_include_directories(nameserver PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc" "${CMAKE_SOURCE_DIR}/include/dfs")
 target_link_libraries(nameserver file_access_grpc_proto health_check_grpc_proto)
 
 add_executable(dataserver 
   "${CMAKE_SOURCE_DIR}/src/dfs/dataserver.cc"
   "${CMAKE_SOURCE_DIR}/src/aux/needle.cpp")
-target_include_directories(dataserver PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc")
+target_include_directories(dataserver PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc" "${CMAKE_SOURCE_DIR}/include/dfs")
 target_link_libraries(dataserver file_access_grpc_proto health_check_grpc_proto)
 
 add_executable(client "${CMAKE_SOURCE_DIR}/src/dfs/client.cc")
-target_include_directories(client PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc" "${FUSE_INCLUDE_DIR}")
+target_include_directories(client PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc" "${FUSE_INCLUDE_DIR}" "${CMAKE_SOURCE_DIR}/include/dfs")
 target_link_directories(client PRIVATE ${FUSE_LIBS_DIR})
 target_link_libraries(client PRIVATE fuse3 file_access_grpc_proto)
