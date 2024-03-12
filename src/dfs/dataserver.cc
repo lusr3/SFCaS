@@ -90,6 +90,7 @@ public:
     void upload_metadata() {
         // client 准备
         StartUpMsg msg;
+        msg.set_address(IP + ":" + PORT);
         msg.set_gid(GID);
         ClientContext context;
         Empty empty_reply;

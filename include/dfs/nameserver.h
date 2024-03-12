@@ -109,12 +109,6 @@ public:
     }
 
     inline bool empty() { return access_times_.empty(); }
-    string get_single_address() {
-        access_locker_.lock();
-        assert(access_times_.size() == 1);
-        access_locker_.unlock();
-        return access_times_[0].address;
-    }
 
     // 定时清空所有的访问次数 防止新加入的 dataserver 请求过多
     void reset() {

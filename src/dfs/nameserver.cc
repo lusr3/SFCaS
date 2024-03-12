@@ -1,50 +1,6 @@
 #include "helper.h"
 #include "nameserver.h"
 
-// 组内的 dataserver 拥有同样的文件备份，轮询处理请求
-// class DataCluster {
-// public:
-//     DataCluster() : id_(0) {}
-//     // 轮询方法获取同一组内不同的 server address
-//     // 注意返回的地址可能已经失效了
-//     string get_server_address() {
-//         string res;
-//         int old_id = id_.load(std::memory_order_seq_cst);
-//         addr_rwlocker_.lock_shared();
-//         int desired;
-//         do {
-//             desired = (old_id + 1) % dataserver_addrs_.size();
-//         } while(!id_.compare_exchange_weak(old_id, desired, std::memory_order_seq_cst));
-//         res = dataserver_addrs_[old_id];
-//         addr_rwlocker_.unlock_shared();
-//         // 直接返回 dataserver_addrs_[old_id]; 可能越界（有 dataserver 退出）
-//         return res;
-//     }
-
-//     void add_server_address(const string &address) {
-//         addr_rwlocker_.lock();
-//         dataserver_addrs_.push_back(address);
-//         addr_rwlocker_.unlock();
-//     }
-
-//     // 同一个集群中的机器不会很多，可以直接遍历删除
-//     void remove_server(const string &address) {
-//         addr_rwlocker_.lock();
-//         for(auto it = dataserver_addrs_.begin(); it != dataserver_addrs_.end(); ++it) {
-//             if((*it) == address) {
-//                 dataserver_addrs_.erase(it);
-//                 break;
-//             }
-//         }
-//         addr_rwlocker_.unlock();
-//     }
-
-// private:
-//     std::atomic<int> id_;
-//     shared_mutex addr_rwlocker_;
-//     std::vector<string> dataserver_addrs_;
-// };
-
 // 到每个 dataserver 的心跳连接管理
 class HealthCheckClient {
 public:
@@ -63,8 +19,13 @@ public:
 
     // 检测 dataserver 是否失效并设置状态和时间戳
     void check(const string &server_address) {
-        // 还未开启 dataserver 端服务（如上传数据未完成，完成后一段时间启动服务）
-        if(this->state_ == LivingState::NOT_READY || !is_timeout(CHECK_BASE)) return;
+        // 还未开启 dataserver 端服务（上传需要时间，需要更新时间戳）
+        if(this->state_ == LivingState::NOT_READY) {
+            timestamp_ = Clock::now();
+            return;
+        }
+        // 为了防止立刻就心跳检测而服务还未启动的余量
+        if(!is_timeout(CHECK_BASE)) return;
 
         ClientContext ctx;
         HealthCheckRequest req;
@@ -102,9 +63,13 @@ public:
         this->timestamp_ = Clock::now();
     }
 
-    inline bool is_living() { return this->state_ == LivingState::LIVING; }
+    // NOT_READY 是待活状态，也算 living
+    inline bool is_living() { return this->state_ == LivingState::LIVING || this->state_ == LivingState::NOT_READY; }
     inline int get_gid() { return this->gid; }
-    inline void set_ready() { this->state_ = LivingState::LIVING; };
+    inline void set_ready() {
+        this->state_ = LivingState::LIVING;
+        this->timestamp_ = Clock::now();
+    };
     
 private:
     unique_ptr<HealthCheck::Stub> stub_;
@@ -185,12 +150,12 @@ public:
     Status upload_metadata(ServerContext *context,
         ServerReader<StartUpMsg> *reader, Empty *response) override {
         StartUpMsg start_up_msg;
-        int gid = -1;
+        string server_address;
 
         // 防止多个 dataserver 同时启动上传导致的并发问题
         metadata_rwlocker_.lock();
         while(reader->Read(&start_up_msg)) {
-            if(gid == -1) gid = start_up_msg.gid();
+            if(server_address.empty()) server_address = start_up_msg.address();
             metadata_ump_[start_up_msg.filename()] = MetaData(start_up_msg.gid(), start_up_msg.file_size());
         }
         metadata_rwlocker_.unlock();
@@ -198,7 +163,7 @@ public:
         // 组内第一次上传元数据
         group_locker_.lock();
         health_locker_.lock();
-        health_ump_[group_ump_[gid].get_single_address()].set_ready();
+        health_ump_[server_address].set_ready();
         health_locker_.unlock();
         group_locker_.unlock();
         return Status::OK;
@@ -231,6 +196,7 @@ private:
 
                 // 仅 濒死 放到 unavailable list
                 else if(!health_check_client.is_living()) {
+                    LOG_THIS("Dataserver in " << server_address << " unavailable");
                     group_locker_.lock();
                     group_ump_[health_check_client.get_gid()].unavail_server(server_address);
                     group_locker_.unlock();
