@@ -163,6 +163,10 @@ void startup() {
         LOG_THIS("New Group Member!");
     else if(connect_state == StartUpReply::RECONNECT)
         LOG_THIS("Reconnect!");
+    else if(connect_state == StartUpReply::DUPLICATE) {
+        ERR_THIS("Duplicate!");
+        return;
+    }
     else {
         LOG_THIS("Connection Refused!");
         return;

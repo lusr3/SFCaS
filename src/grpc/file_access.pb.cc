@@ -248,22 +248,23 @@ const char descriptor_table_protodef_file_5faccess_2eproto[] PROTOBUF_SECTION_VA
     "quest\022\020\n\010filename\030\001 \001(\t\"3\n\rMetaDataReply"
     "\022\017\n\007address\030\001 \001(\t\022\021\n\tfile_size\030\002 \001(\004\"O\n\n"
     "StartUpMsg\022\013\n\003gid\030\001 \001(\005\022\017\n\007address\030\002 \001(\t"
-    "\022\020\n\010filename\030\003 \001(\t\022\021\n\tfile_size\030\004 \001(\004\"\221\001"
+    "\022\020\n\010filename\030\003 \001(\t\022\021\n\tfile_size\030\004 \001(\004\"\240\001"
     "\n\014StartUpReply\022B\n\rconnect_state\030\001 \001(\0162+."
     "sfcas.fileaccess.StartUpReply.ConnectSta"
-    "te\"=\n\014ConnectState\022\007\n\003NEW\020\000\022\r\n\tRECONNECT"
-    "\020\001\022\n\n\006BACKUP\020\002\022\t\n\005ERROR\020\003\"=\n\013DataRequest"
-    "\022\020\n\010filename\030\001 \001(\t\022\016\n\006offset\030\002 \001(\004\022\014\n\004si"
-    "ze\030\003 \001(\004\"\032\n\tDataReply\022\r\n\005chunk\030\001 \001(\0142\325\002\n"
-    "\nFileAccess\022S\n\021connect_to_master\022\034.sfcas"
-    ".fileaccess.StartUpMsg\032\036.sfcas.fileacces"
-    "s.StartUpReply\"\000\022K\n\017upload_metadata\022\034.sf"
-    "cas.fileaccess.StartUpMsg\032\026.google.proto"
-    "buf.Empty\"\000(\001\022Y\n\021get_file_metadata\022!.sfc"
-    "as.fileaccess.MetaDataRequest\032\037.sfcas.fi"
-    "leaccess.MetaDataReply\"\000\022J\n\010get_data\022\035.s"
-    "fcas.fileaccess.DataRequest\032\033.sfcas.file"
-    "access.DataReply\"\0000\001b\006proto3"
+    "te\"L\n\014ConnectState\022\007\n\003NEW\020\000\022\r\n\tRECONNECT"
+    "\020\001\022\n\n\006BACKUP\020\002\022\r\n\tDUPLICATE\020\003\022\t\n\005ERROR\020\004"
+    "\"=\n\013DataRequest\022\020\n\010filename\030\001 \001(\t\022\016\n\006off"
+    "set\030\002 \001(\004\022\014\n\004size\030\003 \001(\004\"\032\n\tDataReply\022\r\n\005"
+    "chunk\030\001 \001(\0142\325\002\n\nFileAccess\022S\n\021connect_to"
+    "_master\022\034.sfcas.fileaccess.StartUpMsg\032\036."
+    "sfcas.fileaccess.StartUpReply\"\000\022K\n\017uploa"
+    "d_metadata\022\034.sfcas.fileaccess.StartUpMsg"
+    "\032\026.google.protobuf.Empty\"\000(\001\022Y\n\021get_file"
+    "_metadata\022!.sfcas.fileaccess.MetaDataReq"
+    "uest\032\037.sfcas.fileaccess.MetaDataReply\"\000\022"
+    "J\n\010get_data\022\035.sfcas.fileaccess.DataReque"
+    "st\032\033.sfcas.fileaccess.DataReply\"\0000\001b\006pro"
+    "to3"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_file_5faccess_2eproto_deps[1] =
     {
@@ -273,7 +274,7 @@ static ::absl::once_flag descriptor_table_file_5faccess_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_file_5faccess_2eproto = {
     false,
     false,
-    828,
+    843,
     descriptor_table_protodef_file_5faccess_2eproto,
     "file_access.proto",
     &descriptor_table_file_5faccess_2eproto_once,
@@ -312,9 +313,9 @@ const ::google::protobuf::EnumDescriptor* StartUpReply_ConnectState_descriptor()
   return file_level_enum_descriptors_file_5faccess_2eproto[0];
 }
 PROTOBUF_CONSTINIT const uint32_t StartUpReply_ConnectState_internal_data_[] = {
-    262144u, 0u, };
+    327680u, 0u, };
 bool StartUpReply_ConnectState_IsValid(int value) {
-  return 0 <= value && value <= 3;
+  return 0 <= value && value <= 4;
 }
 #if (__cplusplus < 201703) && \
   (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
@@ -322,6 +323,7 @@ bool StartUpReply_ConnectState_IsValid(int value) {
 constexpr StartUpReply_ConnectState StartUpReply::NEW;
 constexpr StartUpReply_ConnectState StartUpReply::RECONNECT;
 constexpr StartUpReply_ConnectState StartUpReply::BACKUP;
+constexpr StartUpReply_ConnectState StartUpReply::DUPLICATE;
 constexpr StartUpReply_ConnectState StartUpReply::ERROR;
 constexpr StartUpReply_ConnectState StartUpReply::ConnectState_MIN;
 constexpr StartUpReply_ConnectState StartUpReply::ConnectState_MAX;

@@ -1,6 +1,3 @@
-#if !defined(UTIL_H)
-#define UTIL_H
-
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -15,6 +12,9 @@
 
 #include "file_access.grpc.pb.h"
 #include "health_check.grpc.pb.h"
+
+#if !defined(UTIL_H)
+#define UTIL_H
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -36,6 +36,7 @@ using std::unique_ptr;
 using std::shared_ptr;
 using std::mutex;
 using std::shared_mutex;
+using std::atomic;
 using std::thread;
 using std::cout;
 using std::endl;

@@ -17,7 +17,8 @@
 #define COUT_THIS(this) std::cout << this << std::endl
 #define COUT_VAR(this) std::cout << #this << ": " << this << std::endl
 #define COUT_POS() COUT_THIS("at " << __FILE__ << ":" << __LINE__)
-#define LOG_THIS(this) std::cerr << this << std::endl
+#define ERR_THIS(this) std::cerr << "[ERR] " << this << std::endl
+#define LOG_THIS(this) std::cerr << "[INFO] " << this << std::endl
 #define INVARIANT(cond)            \
   if (!(cond)) {                   \
     COUT_THIS(#cond << " failed"); \

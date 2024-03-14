@@ -25,7 +25,8 @@ message StartUpReply {
         NEW = 0;
         RECONNECT = 1;
         BACKUP = 2;
-        ERROR = 3;
+        DUPLICATE = 3;
+        ERROR = 4;
     }
     ConnectState connect_state = 1;
 }

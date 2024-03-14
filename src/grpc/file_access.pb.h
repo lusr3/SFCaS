@@ -90,7 +90,8 @@ enum StartUpReply_ConnectState : int {
   StartUpReply_ConnectState_NEW = 0,
   StartUpReply_ConnectState_RECONNECT = 1,
   StartUpReply_ConnectState_BACKUP = 2,
-  StartUpReply_ConnectState_ERROR = 3,
+  StartUpReply_ConnectState_DUPLICATE = 3,
+  StartUpReply_ConnectState_ERROR = 4,
   StartUpReply_ConnectState_StartUpReply_ConnectState_INT_MIN_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::min(),
   StartUpReply_ConnectState_StartUpReply_ConnectState_INT_MAX_SENTINEL_DO_NOT_USE_ =
@@ -100,8 +101,8 @@ enum StartUpReply_ConnectState : int {
 bool StartUpReply_ConnectState_IsValid(int value);
 extern const uint32_t StartUpReply_ConnectState_internal_data_[];
 constexpr StartUpReply_ConnectState StartUpReply_ConnectState_ConnectState_MIN = static_cast<StartUpReply_ConnectState>(0);
-constexpr StartUpReply_ConnectState StartUpReply_ConnectState_ConnectState_MAX = static_cast<StartUpReply_ConnectState>(3);
-constexpr int StartUpReply_ConnectState_ConnectState_ARRAYSIZE = 3 + 1;
+constexpr StartUpReply_ConnectState StartUpReply_ConnectState_ConnectState_MAX = static_cast<StartUpReply_ConnectState>(4);
+constexpr int StartUpReply_ConnectState_ConnectState_ARRAYSIZE = 4 + 1;
 const ::google::protobuf::EnumDescriptor*
 StartUpReply_ConnectState_descriptor();
 template <typename T>
@@ -114,7 +115,7 @@ const std::string& StartUpReply_ConnectState_Name(T value) {
 template <>
 inline const std::string& StartUpReply_ConnectState_Name(StartUpReply_ConnectState value) {
   return ::google::protobuf::internal::NameOfDenseEnum<StartUpReply_ConnectState_descriptor,
-                                                 0, 3>(
+                                                 0, 4>(
       static_cast<int>(value));
 }
 inline bool StartUpReply_ConnectState_Parse(absl::string_view name, StartUpReply_ConnectState* value) {
@@ -260,6 +261,7 @@ class StartUpReply final :
   static constexpr ConnectState NEW = StartUpReply_ConnectState_NEW;
   static constexpr ConnectState RECONNECT = StartUpReply_ConnectState_RECONNECT;
   static constexpr ConnectState BACKUP = StartUpReply_ConnectState_BACKUP;
+  static constexpr ConnectState DUPLICATE = StartUpReply_ConnectState_DUPLICATE;
   static constexpr ConnectState ERROR = StartUpReply_ConnectState_ERROR;
   static inline bool ConnectState_IsValid(int value) {
     return StartUpReply_ConnectState_IsValid(value);
