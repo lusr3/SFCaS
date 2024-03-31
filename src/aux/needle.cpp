@@ -26,5 +26,3 @@ void insert_needle_index(struct needle_index *needle, FILE *index_file) {
     fwrite(&(needle->size), sizeof(needle->size), 1, index_file);
     fwrite(needle->filename.get_name(), 1, strlen(needle->filename.get_name()), index_file);
 }
-
-

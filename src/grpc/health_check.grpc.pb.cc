@@ -24,7 +24,6 @@ namespace healthcheck {
 
 static const char* HealthCheck_method_names[] = {
   "/sfcas.healthcheck.HealthCheck/Check",
-  "/sfcas.healthcheck.HealthCheck/Watch",
 };
 
 std::unique_ptr< HealthCheck::Stub> HealthCheck::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -35,7 +34,6 @@ std::unique_ptr< HealthCheck::Stub> HealthCheck::NewStub(const std::shared_ptr< 
 
 HealthCheck::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_Check_(HealthCheck_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Watch_(HealthCheck_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
 ::grpc::Status HealthCheck::Stub::Check(::grpc::ClientContext* context, const ::sfcas::healthcheck::HealthCheckRequest& request, ::sfcas::healthcheck::HealthCheckResponse* response) {
@@ -61,22 +59,6 @@ void HealthCheck::Stub::async::Check(::grpc::ClientContext* context, const ::sfc
   return result;
 }
 
-::grpc::ClientReader< ::sfcas::healthcheck::HealthCheckResponse>* HealthCheck::Stub::WatchRaw(::grpc::ClientContext* context, const ::sfcas::healthcheck::HealthCheckRequest& request) {
-  return ::grpc::internal::ClientReaderFactory< ::sfcas::healthcheck::HealthCheckResponse>::Create(channel_.get(), rpcmethod_Watch_, context, request);
-}
-
-void HealthCheck::Stub::async::Watch(::grpc::ClientContext* context, const ::sfcas::healthcheck::HealthCheckRequest* request, ::grpc::ClientReadReactor< ::sfcas::healthcheck::HealthCheckResponse>* reactor) {
-  ::grpc::internal::ClientCallbackReaderFactory< ::sfcas::healthcheck::HealthCheckResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_Watch_, context, request, reactor);
-}
-
-::grpc::ClientAsyncReader< ::sfcas::healthcheck::HealthCheckResponse>* HealthCheck::Stub::AsyncWatchRaw(::grpc::ClientContext* context, const ::sfcas::healthcheck::HealthCheckRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc::internal::ClientAsyncReaderFactory< ::sfcas::healthcheck::HealthCheckResponse>::Create(channel_.get(), cq, rpcmethod_Watch_, context, request, true, tag);
-}
-
-::grpc::ClientAsyncReader< ::sfcas::healthcheck::HealthCheckResponse>* HealthCheck::Stub::PrepareAsyncWatchRaw(::grpc::ClientContext* context, const ::sfcas::healthcheck::HealthCheckRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncReaderFactory< ::sfcas::healthcheck::HealthCheckResponse>::Create(channel_.get(), cq, rpcmethod_Watch_, context, request, false, nullptr);
-}
-
 HealthCheck::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       HealthCheck_method_names[0],
@@ -88,16 +70,6 @@ HealthCheck::Service::Service() {
              ::sfcas::healthcheck::HealthCheckResponse* resp) {
                return service->Check(ctx, req, resp);
              }, this)));
-  AddMethod(new ::grpc::internal::RpcServiceMethod(
-      HealthCheck_method_names[1],
-      ::grpc::internal::RpcMethod::SERVER_STREAMING,
-      new ::grpc::internal::ServerStreamingHandler< HealthCheck::Service, ::sfcas::healthcheck::HealthCheckRequest, ::sfcas::healthcheck::HealthCheckResponse>(
-          [](HealthCheck::Service* service,
-             ::grpc::ServerContext* ctx,
-             const ::sfcas::healthcheck::HealthCheckRequest* req,
-             ::grpc::ServerWriter<::sfcas::healthcheck::HealthCheckResponse>* writer) {
-               return service->Watch(ctx, req, writer);
-             }, this)));
 }
 
 HealthCheck::Service::~Service() {
@@ -107,13 +79,6 @@ HealthCheck::Service::~Service() {
   (void) context;
   (void) request;
   (void) response;
-  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-}
-
-::grpc::Status HealthCheck::Service::Watch(::grpc::ServerContext* context, const ::sfcas::healthcheck::HealthCheckRequest* request, ::grpc::ServerWriter< ::sfcas::healthcheck::HealthCheckResponse>* writer) {
-  (void) context;
-  (void) request;
-  (void) writer;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 

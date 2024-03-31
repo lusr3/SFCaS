@@ -1,13 +1,3 @@
-/*
-  FUSE: Filesystem in Userspace
-  Copyright (C) 2001-2007  Miklos Szeredi <miklos@szeredi.hu>
-  Copyright (C) 2011       Sebastian Pipping <sebastian@pipping.org>
-
-  This program can be distributed under the terms of the GNU GPL.
-  See the file COPYING.
-
-*/
-
 #define FUSE_USE_VERSION 31
 
 #include <fuse.h>
@@ -28,7 +18,7 @@
 
 // 初始化时加载的索引信息
 static struct needle_index_list index_list;
-static sindex_t *sindex_model;
+static sindex_t *sindex_model = nullptr;
 
 static int sfcas_getattr(const char *path, struct stat *stbuf,
 			struct fuse_file_info *fi)
@@ -40,7 +30,7 @@ static int sfcas_getattr(const char *path, struct stat *stbuf,
 		stbuf->st_mode = __S_IFDIR | 0755;
 		index_list.is_cached = false;
 	}
-	else if(strcmp(filename + 1, DATAFILE) == 0
+	else if(strcmp(filename + 1, BIGFILE) == 0
 	|| strcmp(filename + 1, INDEXFILE) == 0) {
 		stbuf->st_mode = __S_IFREG | 0444;
 		index_list.is_cached = false;
@@ -133,7 +123,6 @@ static const struct fuse_operations myOper = {
 	.readdir 	= sfcas_readdir,
 	.init		= sfcas_init
 };
-
 
 int main(int argc, char *argv[])
 {

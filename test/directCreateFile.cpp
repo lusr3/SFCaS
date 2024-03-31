@@ -25,7 +25,7 @@ int main() {
     
     char path2indexFile[BUFFER_SIZE], path2dataFile[BUFFER_SIZE];
     sprintf(path2indexFile, "%s/%s/%s%ld", PATH2PDIR, BACKDIR, INDEXFILE, createNum);
-    sprintf(path2dataFile, "%s/%s/%s%ld", PATH2PDIR, BACKDIR, DATAFILE, createNum);
+    sprintf(path2dataFile, "%s/%s/%s%ld", PATH2PDIR, BACKDIR, BIGFILE, createNum);
 
     FILE *index_file = fopen(path2indexFile, "wb");
     if(index_file == NULL) {

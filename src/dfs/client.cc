@@ -95,7 +95,7 @@ private:
 
 static FileAccessMetaDataClient *metadata_client;
 
-static int sfcas_getattr(const char *path, struct stat *stbuf,
+static int client_getattr(const char *path, struct stat *stbuf,
 			struct fuse_file_info *fi)
 {
 	const char *filename = strrchr(path, '/');
@@ -105,7 +105,7 @@ static int sfcas_getattr(const char *path, struct stat *stbuf,
 		stbuf->st_mode = __S_IFDIR | 0755;
 		metadata_client->remove_cache();
 	}
-	else if(strcmp(filename + 1, DATAFILE) == 0
+	else if(strcmp(filename + 1, BIGFILE) == 0
 	|| strcmp(filename + 1, INDEXFILE) == 0) {
 		stbuf->st_mode = __S_IFREG | 0444;
 		metadata_client->remove_cache();
@@ -127,7 +127,7 @@ static int sfcas_getattr(const char *path, struct stat *stbuf,
 	return 0;
 }
 
-static int sfcas_open(const char *path, struct fuse_file_info *fi) {	
+static int client_open(const char *path, struct fuse_file_info *fi) {	
 	const char *filename = strrchr(path, '/');
 
 	MetaData metadata;
@@ -141,7 +141,7 @@ static int sfcas_open(const char *path, struct fuse_file_info *fi) {
 	return 0;
 }
 
-static int sfcas_read(const char *path, char *buf, size_t size, off_t offset,
+static int client_read(const char *path, char *buf, size_t size, off_t offset,
 		    struct fuse_file_info *fi) {
 	const char *filename = strrchr(path, '/');
 
@@ -170,7 +170,7 @@ static int sfcas_read(const char *path, char *buf, size_t size, off_t offset,
 	return read_size;
 }
 
-static void *sfcas_init(struct fuse_conn_info *conn,
+static void *client_init(struct fuse_conn_info *conn,
 			struct fuse_config *cfg)
 {
 	(void) conn;
@@ -180,10 +180,10 @@ static void *sfcas_init(struct fuse_conn_info *conn,
 
 // 按照出现顺序无序初始化
 static const struct fuse_operations myOper = {
-	.getattr 	= sfcas_getattr,
-	.open 		= sfcas_open,
-	.read 		= sfcas_read,
-	.init		= sfcas_init
+	.getattr 	= client_getattr,
+	.open 		= client_open,
+	.read 		= client_read,
+	.init		= client_init
 };
 
 void read_ini() {

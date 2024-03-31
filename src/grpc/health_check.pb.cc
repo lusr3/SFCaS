@@ -107,18 +107,16 @@ const char descriptor_table_protodef_health_5fcheck_2eproto[] PROTOBUF_SECTION_V
     ".sfcas.healthcheck.HealthCheckResponse.S"
     "ervingStatus\"O\n\rServingStatus\022\013\n\007UNKNOWN"
     "\020\000\022\013\n\007SERVING\020\001\022\017\n\013NOT_SERVING\020\002\022\023\n\017SERV"
-    "ICE_UNKNOWN\020\0032\277\001\n\013HealthCheck\022V\n\005Check\022%"
-    ".sfcas.healthcheck.HealthCheckRequest\032&."
-    "sfcas.healthcheck.HealthCheckResponse\022X\n"
-    "\005Watch\022%.sfcas.healthcheck.HealthCheckRe"
-    "quest\032&.sfcas.healthcheck.HealthCheckRes"
-    "ponse0\001b\006proto3"
+    "ICE_UNKNOWN\020\0032e\n\013HealthCheck\022V\n\005Check\022%."
+    "sfcas.healthcheck.HealthCheckRequest\032&.s"
+    "fcas.healthcheck.HealthCheckResponseb\006pr"
+    "oto3"
 };
 static ::absl::once_flag descriptor_table_health_5fcheck_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_health_5fcheck_2eproto = {
     false,
     false,
-    455,
+    364,
     descriptor_table_protodef_health_5fcheck_2eproto,
     "health_check.proto",
     &descriptor_table_health_5fcheck_2eproto_once,

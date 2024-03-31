@@ -24,7 +24,7 @@ int64_t init(struct needle_index_list *index_list) {
 	// 排序
     std::sort(index_list->indexs.begin(), index_list->indexs.end());
     // 打开大文件
-    sprintf(path, "%s/%s/%s", PATH2PDIR, OPDIR, DATAFILE);
+    sprintf(path, "%s/%s/%s", PATH2PDIR, OPDIR, BIGFILE);
 	index_list->data_file = fopen(path, "rb");
 	if(index_list->data_file == NULL) {
         fclose(index_file);

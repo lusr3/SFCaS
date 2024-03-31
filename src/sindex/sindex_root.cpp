@@ -73,6 +73,7 @@ inline void Root<key_t, val_t>::train_piecewise_model() {
     size_t trailing = indexes.size() - index_per_model * max_root_model_n;
     size_t start_i = 0;
     // 将 trailing 的部分依次添加到前面的 model 中去
+    // 其实是将前面部分多个组融合在一起，直到最后剩下 max_root_model_n 个组
     for (size_t i = 0; i < max_root_model_n; ++i) {
       new_indexes.push_back(indexes[start_i]);
       start_i += index_per_model;

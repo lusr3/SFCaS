@@ -7,15 +7,15 @@
 #include "helper.h"
 
 int main() {
-    char path2file[BUFFER_SIZE], path2indexFile[BUFFER_SIZE], path2dataFile[BUFFER_SIZE];
+    char path2file[PATH_SIZE], path2indexFile[PATH_SIZE], path2bigFile[PATH_SIZE];
     char buf[BUFFER_SIZE];
     sprintf(path2file, "%s/%s", PATH2PDIR, OPDIR);
     sprintf(path2indexFile, "%s/%s/%s", PATH2PDIR, OPDIR, INDEXFILE);
-    sprintf(path2dataFile, "%s/%s/%s", PATH2PDIR, OPDIR, DATAFILE);
+    sprintf(path2bigFile, "%s/%s/%s", PATH2PDIR, OPDIR, BIGFILE);
 
     uint64_t small_file_num = 0;
     FILE *index_file = fopen(path2indexFile, "wb+");
-    if(index_file == NULL) {
+    if(index_file == nullptr) {
         print_error("Error for index file %s\n", path2indexFile);
         return -1;
     }
@@ -26,10 +26,10 @@ int main() {
     //     fwrite(&small_file_num, sizeof(uint64_t), 1, index_file);
     // }
     fwrite(&small_file_num, sizeof(uint64_t), 1, index_file);
-    FILE *data_file = fopen(path2dataFile, "wb+");
-    if(data_file == NULL) {
+    FILE *big_file = fopen(path2bigFile, "wb+");
+    if(big_file == nullptr) {
         fclose(index_file);
-        print_error("Error for data file %s\n", path2dataFile);
+        print_error("Error for data file %s\n", path2bigFile);
         return -1;
     }
     
@@ -48,7 +48,7 @@ int main() {
         
         if(flag < 0) {
             fclose(index_file);
-            fclose(data_file);
+            fclose(big_file);
             print_error("Error for stat %s\n", entry->d_name);
             return -1;
         }
@@ -56,25 +56,25 @@ int main() {
         // 跳过目录、索引文件和大文件
         if(S_ISDIR(file_info.st_mode) 
         || strcmp(entry->d_name, INDEXFILE) == 0 
-        || strcmp(entry->d_name, DATAFILE) == 0) continue;
+        || strcmp(entry->d_name, BIGFILE) == 0) continue;
 
         // 插入索引文件
-        set_needle_index(&needle, &file_info, entry, ftell(data_file));
+        set_needle_index(&needle, &file_info, entry, ftell(big_file));
         insert_needle_index(&needle, index_file);
 
         // 插入数据文件
         int cnt = 0;
-        FILE *small_file = fopen(path2file, "r");
-        if(small_file == NULL) {
+        FILE *small_file = fopen(path2file, "rb");
+        if(small_file == nullptr) {
             fclose(index_file);
-            fclose(data_file);
+            fclose(big_file);
             print_error("Error on open %s\n", path2file);
             return -1;
         }
         do {
             int read_bytes = std::min(file_info.st_size - cnt, (long)BUFFER_SIZE);
             fread(buf, 1, read_bytes, small_file);
-            fwrite(buf, 1, read_bytes, data_file);
+            fwrite(buf, 1, read_bytes, big_file);
             cnt += read_bytes;
         }
         while(cnt < file_info.st_size);
@@ -84,7 +84,7 @@ int main() {
         flag = remove(path2file);
         if(flag < 0) {
             fclose(index_file);
-            fclose(data_file);
+            fclose(big_file);
             print_error("Error on remove %s\n", path2file);
             return 1;
         }
@@ -98,6 +98,6 @@ int main() {
     closedir(dir);
     
     fclose(index_file);
-    fclose(data_file);
+    fclose(big_file);
     return 0;
 }

@@ -36,12 +36,7 @@
 #define DEBUG_THIS(this) std::cerr << this << std::endl
 #endif
 
-inline void print_error(const char *format, ...) {
-  va_list my_args;
-  va_start(my_args, format);
-  vfprintf(stderr, format, my_args);
-  va_end(my_args);
-}
+#define print_error(format, ...) fprintf(stderr, format, ##__VA_ARGS__)
 
 // 输出当前时间
 inline std::string formatTime(const std::chrono::system_clock::time_point& timePoint) {

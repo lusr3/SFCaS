@@ -73,6 +73,7 @@ public:
         if(reply.status() != HealthCheckResponse::SERVING) {
             LOG_THIS("Dataserver not serving!");
             this->state_ = UNKNOWN;
+            return;
         }
 
         // 可能从断线恢复正常
