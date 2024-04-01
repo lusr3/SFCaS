@@ -43,9 +43,10 @@ public:
 
     HealthCheckClient() : timestamp_(Clock::now()), gid(-1), state_(LivingState::NOT_READY) {}
 
-    HealthCheckClient(shared_ptr<Channel> channel, const Timestamp &current_timestamp, int _gid = -1)
+    HealthCheckClient(shared_ptr<Channel> channel, const Timestamp &current_timestamp, 
+        int _gid = -1, LivingState _state = NOT_READY)
         : stub_(HealthCheck::NewStub(channel)), timestamp_(current_timestamp), 
-        state_(LivingState::NOT_READY), gid(_gid) {}
+        state_(_state), gid(_gid) {}
 
     // 检测 dataserver 是否失效并设置状态和时间戳
     void check() {
@@ -112,8 +113,8 @@ private:
 // 多个 dataserver 组成一个组，形成 datacluster
 class DataCluster {
 public:
-    DataCluster() : available_num_(0) {}
-    DataCluster(const DataCluster &data_cluster) : available_num_(0) {}
+    DataCluster() : available_num_(0), group_ready_(false) {}
+    DataCluster(const DataCluster &data_cluster) : available_num_(0), group_ready_(false) {}
 
     // 加入新 server 到可用末尾并重新建堆
     // 加入心跳检测
@@ -126,7 +127,8 @@ public:
         ++available_num_;
         std::push_heap(access_times_.begin(), access_times_.begin() + available_num_);
         health_ump_[address] = HealthCheckClient(grpc::CreateChannel(
-                address, grpc::InsecureChannelCredentials()), Clock::now(), gid);
+                address, grpc::InsecureChannelCredentials()), Clock::now(), gid,
+                group_ready_ ? HealthCheckClient::LivingState::LIVING : HealthCheckClient::LivingState::NOT_READY);
         locker_.unlock();
     }
 
@@ -233,6 +235,7 @@ public:
         for(auto &health_item : health_ump_) {
             health_item.second.set_ready();
         }
+        group_ready_ = true;
         locker_.unlock();
     }
 
@@ -270,6 +273,7 @@ private:
     // [avail_list](heap) [unavail_list(near_dead / dead)](unheap)
     vector<AccessTime> access_times_;
     unordered_map<string, HealthCheckClient> health_ump_;
+    bool group_ready_;
 };
 
 #endif

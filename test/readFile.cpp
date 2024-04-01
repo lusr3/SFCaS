@@ -96,11 +96,14 @@ int tese_for_time() {
     return 0;
 }
 
+// 测试所有文件读取
 void test_for_range() {
     char buf[BUFFER_SIZE + 7];
     long start = 0, test_file_num = 0;
     printf("Start file and num is:");
     scanf("%ld %ld", &start, &test_file_num);
+    struct timeval start_time, end_time;
+    gettimeofday(&start_time, NULL);
     for(long i = 0; i < test_file_num; ++i) {
         sprintf(buf, "%s/%s/%s%0*ld%s", PATH2PDIR, MOUNTDIR, FILEPREFIX, FILE_ID_LEN, i + start, FILESUFFIX);
         FILE *fp = fopen(buf, "rb");
@@ -114,6 +117,9 @@ void test_for_range() {
         
         fclose(fp);
     }
+    gettimeofday(&end_time, NULL);
+    long timeuse = 1000000 * (end_time.tv_sec - start_time.tv_sec) + end_time.tv_usec-start_time.tv_usec;
+    printf("Cost time: %ldus\n", timeuse);
 }
 
 int main() {
