@@ -19,6 +19,7 @@
 // 初始化时加载的索引信息
 static struct needle_index_list index_list;
 static sindex_t *sindex_model = nullptr;
+static std::unordered_map<index_key_t, size_t> ump;
 
 static int sfcas_getattr(const char *path, struct stat *stbuf,
 			struct fuse_file_info *fi)
@@ -36,7 +37,7 @@ static int sfcas_getattr(const char *path, struct stat *stbuf,
 		index_list.is_cached = false;
 	}
 	else {
-		struct needle_index *cur_index = find_index(&index_list, filename + 1, sindex_model);
+		struct needle_index *cur_index = find_index(&index_list, filename + 1, ump);
 		if(!cur_index) {
 			index_list.is_cached = false;
 			print_error("Error on finding target file %s.\n", filename + 1);
@@ -75,7 +76,7 @@ static int sfcas_open(const char *path, struct fuse_file_info *fi) {
 	if(index_list.is_cached && strcmp(filename + 1, index_list.cached_item->filename.get_name()) == 0) 
 		cur_index = index_list.cached_item;
 	else 
-		cur_index = find_index(&index_list, filename + 1, sindex_model);
+		cur_index = find_index(&index_list, filename + 1, ump);
 	
 	if(!cur_index) {
 		return -ENOENT;
@@ -92,7 +93,7 @@ static int sfcas_read(const char *path, char *buf, size_t size, off_t offset,
 	if(index_list.is_cached && strcmp(filename + 1, index_list.cached_item->filename.get_name()) == 0) 
 		cur_index = index_list.cached_item;
 	else 
-		cur_index = find_index(&index_list, filename + 1, sindex_model);
+		cur_index = find_index(&index_list, filename + 1, ump);
 	// 读取数据
 	if(cur_index) {
 		int flag = fseek(index_list.data_file, cur_index->offset + offset, SEEK_SET);
@@ -126,7 +127,7 @@ static const struct fuse_operations myOper = {
 
 int main(int argc, char *argv[])
 {
-	if(init(&index_list) < 0) {
+	if(init(&index_list, ump) < 0) {
 		print_error("Error on load index\n");
 		return 1;
 	}

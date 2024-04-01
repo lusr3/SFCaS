@@ -1,6 +1,6 @@
 #include "index.h"
 
-int64_t init(struct needle_index_list *index_list) {
+int64_t init(struct needle_index_list *index_list, std::unordered_map<index_key_t, size_t> &ump) {
     COUT_THIS("Init start!");
     char path[1024];
 	sprintf(path, "%s/%s/%s", PATH2PDIR, OPDIR, INDEXFILE);
@@ -14,15 +14,17 @@ int64_t init(struct needle_index_list *index_list) {
     fread(&(index_list->index_num), sizeof(uint64_t), 1, index_file);
     index_list->indexs.resize(index_list->index_num);
     DEBUG_THIS("index num: " << index_list->index_num);
+    ump.reserve(index_list->index_num * 2);
 
 	// 读入 index 文件
     for(size_t index_i = 0; index_i < index_list->index_num; ++index_i) {
 		read_needle_index(&(index_list->indexs[index_i]), index_file);
+        ump[index_list->indexs[index_i].filename] = index_i;
 	}
 	fclose(index_file);
 
 	// 排序
-    std::sort(index_list->indexs.begin(), index_list->indexs.end());
+    // std::sort(index_list->indexs.begin(), index_list->indexs.end());
     // 打开大文件
     sprintf(path, "%s/%s/%s", PATH2PDIR, OPDIR, BIGFILE);
 	index_list->data_file = fopen(path, "rb");
@@ -53,14 +55,15 @@ sindex_t *get_sindex_model(std::vector<struct needle_index> &indexs){
     return nullptr;
 }
 
-struct needle_index *find_index(struct needle_index_list *index_list, const char *filename, sindex_t *index_model){
+struct needle_index *find_index(struct needle_index_list *index_list, const char *filename, std::unordered_map<index_key_t, size_t> &ump){
     // uint64_t pos = 0;
     // if(index_model->get(index_key_t(filename), pos)) {
     //     return &(index_list->indexs[pos]);
     // }
     // return nullptr;
-    for(size_t i = 0; i < index_list->index_num; ++i) {
-        if(strcmp(filename, index_list->indexs[i].filename.buf) == 0) return &(index_list->indexs[i]);
+    index_key_t key = filename;
+    if(ump.find(key) != ump.end()) {
+        return &(index_list->indexs[ump[key]]);
     }
     return nullptr;
 }

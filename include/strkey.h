@@ -104,4 +104,15 @@ public:
 
 typedef StrKey<MAX_FILE_LEN + 1> index_key_t;
 
+namespace std {
+    template<>
+    struct hash<index_key_t> {
+        size_t operator()(const index_key_t& s) const {
+			std::hash<std::string> hasher;
+            return hasher(s.buf);
+        }
+    };
+}
+
+
 #endif

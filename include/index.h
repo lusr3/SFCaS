@@ -14,11 +14,11 @@ typedef sindex::SIndex<index_key_t, uint64_t> sindex_t;
 
 // 装载 index 文件内容并得到大文件的文件指针
 // 成功返回 index 数目，失败返回 -1
-int64_t init(struct needle_index_list *index_list);
+int64_t init(struct needle_index_list *index_list, std::unordered_map<index_key_t, size_t> &ump);
 void release_needle(struct needle_index_list *index_list);
 
 // 从 index_list 中找到对应于 filename 的 needle_index
-struct needle_index *find_index(struct needle_index_list *index_list, const char *filename, sindex_t *sindex_model);
+struct needle_index *find_index(struct needle_index_list *index_list, const char *filename, std::unordered_map<index_key_t, size_t> &ump);
 
 /*  SIndex  */
 sindex_t *get_sindex_model(std::vector<struct needle_index> &indexs);
