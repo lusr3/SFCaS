@@ -42,20 +42,25 @@ int64_t init(struct needle_index_list *index_list) {
 
 sindex_t *get_sindex_model(std::vector<struct needle_index> &indexs){
     // 构造 keys 和 vals
-    std::vector<index_key_t> keys(indexs.size());
-    for(size_t i = 0; i < indexs.size(); ++i) {
-        keys[i] = indexs[i].filename;
-    }
-    std::vector<uint64_t> vals(indexs.size());
-    std::iota(vals.begin(), vals.end(), 0);
-    DEBUG_THIS("Index size: " << indexs.size());
-    return new sindex_t(keys, vals, indexs);
+    // std::vector<index_key_t> keys(indexs.size());
+    // for(size_t i = 0; i < indexs.size(); ++i) {
+    //     keys[i] = indexs[i].filename;
+    // }
+    // std::vector<uint64_t> vals(indexs.size());
+    // std::iota(vals.begin(), vals.end(), 0);
+    // DEBUG_THIS("Index size: " << indexs.size());
+    // return new sindex_t(keys, vals, indexs);
+    return nullptr;
 }
 
 struct needle_index *find_index(struct needle_index_list *index_list, const char *filename, sindex_t *index_model){
-    uint64_t pos = 0;
-    if(index_model->get(index_key_t(filename), pos)) {
-        return &(index_list->indexs[pos]);
+    // uint64_t pos = 0;
+    // if(index_model->get(index_key_t(filename), pos)) {
+    //     return &(index_list->indexs[pos]);
+    // }
+    // return nullptr;
+    for(size_t i = 0; i < index_list->index_num; ++i) {
+        if(strcmp(filename, index_list->indexs[i].filename.buf) == 0) return &(index_list->indexs[i]);
     }
     return nullptr;
 }
