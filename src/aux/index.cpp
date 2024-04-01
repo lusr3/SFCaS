@@ -59,9 +59,11 @@ struct needle_index *find_index(struct needle_index_list *index_list, const char
     //     return &(index_list->indexs[pos]);
     // }
     // return nullptr;
-    for(size_t i = 0; i < index_list->index_num; ++i) {
-        if(strcmp(filename, index_list->indexs[i].filename.buf) == 0) return &(index_list->indexs[i]);
-    }
+    
+    needle_index key;
+    key.filename = index_key_t(filename);
+    auto iter = std::lower_bound(index_list->indexs.begin(), index_list->indexs.end(), key);
+    if(iter != index_list->indexs.end() && iter->filename == key.filename) return &(index_list->indexs[iter - index_list->indexs.begin()]);
     return nullptr;
 }
 

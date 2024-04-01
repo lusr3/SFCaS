@@ -14,7 +14,7 @@
 #define BIGFILE "bigfile"
 
 // 常数宏定义
-#define MAX_FILE_LEN 30
+#define MAX_FILE_LEN 50
 #define NEEDLE_BASIC_SIZE 17    // 4(needle_size) + 1(flags) + 8(offset) + 4(size)
 #define FILE_EXIT 0x1
 #define BUFFER_SIZE 1024
