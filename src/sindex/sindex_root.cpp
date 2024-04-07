@@ -480,8 +480,11 @@ inline void Root<key_t, val_t>::read_model(needle_index *needle_begin) {
   }
 
   fread(&group_n, sizeof(group_n), 1, model_file);
+  COUT_THIS("The number of groups: " << group_n);
   fread(&root_model_n, sizeof(root_model_n), 1, model_file);
+  COUT_THIS("The number of root models: " << root_model_n);
   groups = std::make_unique<std::pair<key_t, group_t *>[]>(group_n);
+  size_t max_group_error = 0;
 
   uint64_t index_cnt = 0;
   for(size_t model_group_start = 0, root_model_i = 0; root_model_i < root_model_n; ++root_model_i) {
@@ -498,10 +501,13 @@ inline void Root<key_t, val_t>::read_model(needle_index *needle_begin) {
       set_group_ptr(group_i, group_ptr);
       set_group_pivot(group_i, needle_begin[index_cnt].filename);
       group_ptr->read_group_model(model_file, needle_begin + index_cnt, index_cnt);
+      max_group_error = std::max(max_group_error, (size_t)abs(group_ptr->max_pos_error - group_ptr->max_neg_error));
       index_cnt += group_ptr->array_size;
     }
     model_group_start += models[root_model_i].pivot_num;
   }
+
+  COUT_THIS("Group max error: " << max_group_error);
 
   fclose(model_file);
 }
