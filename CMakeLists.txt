@@ -60,11 +60,11 @@ aux_source_directory("${CMAKE_SOURCE_DIR}/src/aux" AUX_SRC)
 aux_source_directory("${CMAKE_SOURCE_DIR}/src/sindex" SINDEX_SRC)
 
 # main program
-add_executable(sfcas "${CMAKE_SOURCE_DIR}/src/sfcas.cpp" ${AUX_SRC} ${SINDEX_SRC})
-target_link_directories(sfcas PRIVATE ${MKL_LIB_DIR} ${FUSE_LIBS_DIR})
-target_compile_options(sfcas PRIVATE -Wall -fmax-errors=5 -faligned-new -march=native -mtune=native -DNDEBUGGING)
-target_include_directories(sfcas PRIVATE "${CMAKE_SOURCE_DIR}/include/sindex" ${MKL_INCLUDE_DIR} ${FUSE_INCLUDE_DIR})
-target_link_libraries(sfcas PRIVATE pthread mkl_rt fuse3)
+# add_executable(sfcas "${CMAKE_SOURCE_DIR}/src/sfcas.cpp" ${AUX_SRC} ${SINDEX_SRC})
+# target_link_directories(sfcas PRIVATE ${MKL_LIB_DIR} ${FUSE_LIBS_DIR})
+# target_compile_options(sfcas PRIVATE -Wall -fmax-errors=5 -faligned-new -march=native -mtune=native -DNDEBUGGING)
+# target_include_directories(sfcas PRIVATE "${CMAKE_SOURCE_DIR}/include/sindex" ${MKL_INCLUDE_DIR} ${FUSE_INCLUDE_DIR})
+# target_link_libraries(sfcas PRIVATE pthread mkl_rt fuse3)
 
 add_executable(combineFile "${CMAKE_SOURCE_DIR}/src/combine/combineFile.cpp" "${CMAKE_SOURCE_DIR}/src/aux/needle.cpp")
 
