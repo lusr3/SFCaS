@@ -25,7 +25,7 @@ int test_for_one_file() {
     int size = fread(buf, 1, BUFFER_SIZE, fp);
     if(size < BUFFER_SIZE) buf[size] = '\0';
     printf("size: %d buf: %s\n", size, buf);
-    
+
     fclose(fp);
     gettimeofday(&end, NULL);
     long timeuse = 1000000*(end.tv_sec - start.tv_sec) + end.tv_usec-start.tv_usec;
@@ -65,7 +65,7 @@ long test_for_many_files(unsigned int seed = 0, bool once = true, long num = 10,
         if(size == 0) {
             print_error("File %s not exist\n", buf);
         }
-        
+
         fclose(fp);
     }
     gettimeofday(&end, NULL);
@@ -78,7 +78,7 @@ long test_for_many_files(unsigned int seed = 0, bool once = true, long num = 10,
 int tese_for_time() {
     int test_times = 0, test_num = 0;
     long MOD = 0;
-    unsigned long avg_time = 0;
+    unsigned long avg_time = 0, min_time = INT64_MAX, max_time = 0;
     printf("Test times, test num and MOD is:");
     scanf("%d %d %ld", &test_times, &test_num, &MOD);
     srand(test_times);
@@ -91,8 +91,12 @@ int tese_for_time() {
         }
         COUT_THIS("Test " << i << " time: " << timeuse);
         avg_time += timeuse;
+        min_time = std::min(min_time, (unsigned long)timeuse);
+        max_time = std::max(max_time, (unsigned long)timeuse);
     }
-    COUT_THIS("Avg time: " << avg_time / test_times);
+    COUT_THIS("Avg time: " << avg_time / test_times << "us");
+    COUT_THIS("Min time: " << min_time << "us");
+    COUT_THIS("Max time: " << max_time << "us");
     return 0;
 }
 
@@ -114,7 +118,7 @@ void test_for_range() {
         if(size == 0) {
             print_error("File %s not exist\n", buf);
         }
-        
+
         fclose(fp);
     }
     gettimeofday(&end_time, NULL);
