@@ -87,7 +87,7 @@ void Group<key_t, val_t>::init_feature_length() {
           std::max(max_adjacent_prefix, prefix_len + adjacent_prefix);
     }
   }
-  
+
   // 为了区分两个 key 需要 +1
   feature_len = max_adjacent_prefix - prefix_len + 1;
   assert(prefix_len <= sizeof(key_t));
@@ -145,7 +145,7 @@ inline result_t Group<key_t, val_t>::get(
   if(search_end < 0) search_end = 0;
   if(search_end >= (int64_t)this->array_size) search_end = this->array_size - 1;
   // 在预测出来的 pos 和误差范围内二分查找
-  size_t pos = binary_search_key(key, pos_pred, search_begin, search_end)
+  size_t pos = binary_search_key(key, pos_pred, search_begin, search_end);
   DEBUG_THIS("predict pos: " << pos);
   DEBUG_THIS("predict name: " << needle_begin[pos].filename);
   DEBUG_THIS("actual name: " << key);

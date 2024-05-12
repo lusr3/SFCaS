@@ -132,13 +132,13 @@ target_link_libraries(health_check_grpc_proto
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
-  
+
 # nameserver dataserver client
 add_executable(nameserver "${CMAKE_SOURCE_DIR}/src/dfs/nameserver.cc")
 target_include_directories(nameserver PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc" "${CMAKE_SOURCE_DIR}/include/dfs")
 target_link_libraries(nameserver file_access_grpc_proto health_check_grpc_proto)
 
-add_executable(dataserver 
+add_executable(dataserver
   "${CMAKE_SOURCE_DIR}/src/dfs/dataserver.cc"
   "${CMAKE_SOURCE_DIR}/src/aux/needle.cpp")
 target_include_directories(dataserver PRIVATE "${CMAKE_SOURCE_DIR}/src/grpc" "${CMAKE_SOURCE_DIR}/include/dfs")
